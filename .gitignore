@@ -1,0 +1,7 @@
+node_modules/
+__codex_write_test.txt
+media/work-videos/McDonal´s x Stranger Things.mp4
+media/work-videos/YUNG BEEF SHOW VISUALS.mp4
+*.log
+.DS_Store
+Thumbs.db
