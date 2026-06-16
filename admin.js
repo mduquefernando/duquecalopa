@@ -145,9 +145,38 @@ async function sendMagicLink(email) {
 }
 
 async function signInWithPassword(email, password) {
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password
+  const url = new URL(`${SUPABASE_URL}/auth/v1/token`);
+  url.searchParams.set("grant_type", "password");
+
+  const response = await fetch(url.href, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+    },
+    body: JSON.stringify({
+      email,
+      password
+    })
+  });
+
+  let payload = null;
+  try {
+    payload = await response.json();
+  } catch {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      payload?.msg || payload?.message || payload?.error_description || `Supabase Auth error ${response.status}`
+    );
+  }
+
+  const { error } = await supabase.auth.setSession({
+    access_token: payload.access_token,
+    refresh_token: payload.refresh_token
   });
 
   if (error) throw error;
