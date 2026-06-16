@@ -452,7 +452,9 @@ if (!isConfigured) {
   renderSession();
 
   supabase.auth.onAuthStateChange(() => {
-    renderSession();
+    window.setTimeout(() => {
+      renderSession();
+    }, 0);
   });
 }
 
@@ -475,6 +477,7 @@ loginForm.addEventListener("submit", async (event) => {
       );
       setLoading(false);
       setMessage("Acceso correcto.");
+      await renderSession();
       return;
     }
 
