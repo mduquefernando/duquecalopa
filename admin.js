@@ -30,7 +30,8 @@ const isConfigured =
   SUPABASE_ANON_KEY.length > 40 &&
   !SUPABASE_ANON_KEY.includes("YOUR_SUPABASE_ANON_KEY");
 
-const SESSION_KEY = "viral_admin_session";
+const SESSION_KEY = "viral_admin_session_v2";
+const LEGACY_SESSION_KEYS = ["viral_admin_session"];
 
 let leads = [];
 let activeUser = null;
@@ -125,6 +126,12 @@ function saveSession(session) {
 
 function clearSession() {
   window.localStorage.removeItem(SESSION_KEY);
+}
+
+function clearLegacySessions() {
+  LEGACY_SESSION_KEYS.forEach((key) => {
+    window.localStorage.removeItem(key);
+  });
 }
 
 function parseJwtPayload(token) {
@@ -583,6 +590,7 @@ async function renderSession() {
 if (!isConfigured) {
   showPanel(configPanel);
 } else {
+  clearLegacySessions();
   maybeConsumeMagicLinkTokens();
   showPanel(loginPanel);
   renderSession();
