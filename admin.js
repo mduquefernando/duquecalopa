@@ -591,9 +591,13 @@ if (!isConfigured) {
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const form = new FormData(loginForm);
-  const email = String(form.get("email") || "").trim().toLowerCase();
-  const password = String(form.get("password") || "").trim();
+  const email = emailInput.value.trim().toLowerCase();
+  const password = passwordInput.value.trim();
+
+  if (!email) {
+    setMessage("Escribe un email.", true);
+    return;
+  }
 
   setAuthDebug(true);
   setLoading(true);
