@@ -479,7 +479,7 @@ loginForm.addEventListener("submit", async (event) => {
 
   setAuthDebug(true);
   setLoading(true);
-  setMessage("Comprobando acceso...");
+  setMessage("Login v9: comprobando acceso...");
 
   const form = new FormData(loginForm);
   const email = form.get("email").trim().toLowerCase();
