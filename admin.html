@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin | VIRAL</title>
-  <link rel="stylesheet" href="admin.css?v=20260616-2" />
+  <link rel="stylesheet" href="admin.css?v=20260616-3" />
 </head>
 <body>
   <main class="admin-shell">
@@ -26,10 +26,13 @@
       <h1 id="loginTitle">Acceso privado</h1>
       <form id="loginForm" class="admin-form">
         <label for="emailInput">Email</label>
+        <input id="emailInput" name="email" type="email" autocomplete="email" required />
+        <label for="passwordInput">Contrasena</label>
         <div class="input-row">
-          <input id="emailInput" name="email" type="email" autocomplete="email" required />
+          <input id="passwordInput" name="password" type="password" autocomplete="current-password" />
           <button class="primary-button" type="submit">Entrar</button>
         </div>
+        <p class="login-hint">Si pones contrasena, entras al instante. Si la dejas vacia, te enviamos magic link por email.</p>
       </form>
       <p id="loginMessage" class="message" role="status"></p>
     </section>
@@ -131,6 +134,6 @@
     </section>
   </main>
 
-  <script type="module" src="admin.js?v=20260616-4"></script>
+  <script type="module" src="admin.js?v=20260616-5"></script>
 </body>
 </html>

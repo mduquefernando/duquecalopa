@@ -7,6 +7,7 @@ const deniedPanel = document.getElementById("deniedPanel");
 const adminPanel = document.getElementById("adminPanel");
 const loginForm = document.getElementById("loginForm");
 const emailInput = document.getElementById("emailInput");
+const passwordInput = document.getElementById("passwordInput");
 const loginMessage = document.getElementById("loginMessage");
 const logoutButton = document.getElementById("logoutButton");
 const sessionLabel = document.getElementById("sessionLabel");
@@ -56,6 +57,7 @@ function setLoading(isLoading) {
   const button = loginForm.querySelector("button");
   button.disabled = isLoading;
   emailInput.disabled = isLoading;
+  passwordInput.disabled = isLoading;
 }
 
 function setCrmMessage(text, isError = false) {
@@ -76,6 +78,9 @@ function getWelcomeMessage(email) {
 
 function getSetupErrorMessage(error) {
   const message = error?.message || "";
+  if (message.includes("Invalid login credentials")) {
+    return "Email o contrasena incorrectos.";
+  }
   if (message.includes("over_email_send_rate_limit")) {
     return "Espera 35 segundos antes de pedir otro enlace.";
   }
@@ -137,6 +142,15 @@ async function sendMagicLink(email) {
     }
     throw new Error(message);
   }
+}
+
+async function signInWithPassword(email, password) {
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) throw error;
 }
 
 async function signOut() {
@@ -418,10 +432,24 @@ loginForm.addEventListener("submit", async (event) => {
   if (!supabase) return;
 
   setLoading(true);
-  setMessage("Enviando enlace de acceso...");
+  setMessage("Comprobando acceso...");
 
-  const email = new FormData(loginForm).get("email").trim().toLowerCase();
+  const form = new FormData(loginForm);
+  const email = form.get("email").trim().toLowerCase();
+  const password = form.get("password").trim();
   try {
+    if (password) {
+      await withTimeout(
+        signInWithPassword(email, password),
+        15000,
+        "Supabase no ha respondido. Revisa la conexion o prueba de nuevo."
+      );
+      setLoading(false);
+      setMessage("Acceso correcto.");
+      return;
+    }
+
+    setMessage("Enviando enlace de acceso...");
     await withTimeout(
       sendMagicLink(email),
       15000,
@@ -429,7 +457,7 @@ loginForm.addEventListener("submit", async (event) => {
     );
   } catch (error) {
     setLoading(false);
-    setMessage(error.message, true);
+    setMessage(getSetupErrorMessage(error), true);
     return;
   }
 
