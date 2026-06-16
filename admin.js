@@ -1,4 +1,3 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from "./supabase-config.js";
 
 const configPanel = document.getElementById("configPanel");
@@ -31,7 +30,8 @@ const isConfigured =
   SUPABASE_ANON_KEY.length > 40 &&
   !SUPABASE_ANON_KEY.includes("YOUR_SUPABASE_ANON_KEY");
 
-let supabase = null;
+const SESSION_KEY = "viral_admin_session";
+
 let leads = [];
 let activeUser = null;
 let activeAdminRecord = null;
@@ -111,6 +111,54 @@ function getRedirectUrl() {
   return new URL("admin.html", window.location.href).href;
 }
 
+function getStorageSession() {
+  try {
+    return JSON.parse(window.localStorage.getItem(SESSION_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function saveSession(session) {
+  window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+}
+
+function clearSession() {
+  window.localStorage.removeItem(SESSION_KEY);
+}
+
+function parseJwtPayload(token) {
+  if (!token) return null;
+  const parts = token.split(".");
+  if (parts.length < 2) return null;
+
+  try {
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const json = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((char) => `%${char.charCodeAt(0).toString(16).padStart(2, "0")}`)
+        .join("")
+    );
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
+function getStoredUser() {
+  const session = getStorageSession();
+  if (!session?.access_token) return null;
+
+  const payload = parseJwtPayload(session.access_token);
+  const email = session.user?.email || payload?.email || "";
+  if (!email) return null;
+
+  return {
+    email
+  };
+}
+
 async function withTimeout(promise, timeoutMs, message) {
   let timeoutId = 0;
   const timeout = new Promise((_, reject) => {
@@ -166,19 +214,10 @@ async function signInWithPassword(email, password) {
       apikey: SUPABASE_ANON_KEY,
       Authorization: `Bearer ${SUPABASE_ANON_KEY}`
     },
-    body: JSON.stringify({
-      email,
-      password
-    })
+    body: JSON.stringify({ email, password })
   });
 
-  let payload = null;
-  try {
-    payload = await response.json();
-  } catch {
-    payload = null;
-  }
-
+  const payload = await response.json().catch(() => null);
   if (!response.ok) {
     throw new Error(
       payload?.msg || payload?.message || payload?.error_description || `Supabase Auth error ${response.status}`
@@ -186,18 +225,113 @@ async function signInWithPassword(email, password) {
   }
 
   debugAuthStep("Sesion recibida. Guardando acceso...");
-  const { error } = await supabase.auth.setSession({
+  saveSession({
     access_token: payload.access_token,
-    refresh_token: payload.refresh_token
+    refresh_token: payload.refresh_token,
+    user: payload.user ? { email: payload.user.email } : { email }
   });
-
-  if (error) throw error;
   debugAuthStep("Sesion guardada.");
 }
 
+async function refreshSession() {
+  const session = getStorageSession();
+  if (!session?.refresh_token) throw new Error("Sesion caducada. Vuelve a entrar.");
+
+  const url = new URL(`${SUPABASE_URL}/auth/v1/token`);
+  url.searchParams.set("grant_type", "refresh_token");
+
+  const response = await fetch(url.href, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+    },
+    body: JSON.stringify({
+      refresh_token: session.refresh_token
+    })
+  });
+
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    clearSession();
+    throw new Error(
+      payload?.msg || payload?.message || payload?.error_description || "Sesion caducada. Vuelve a entrar."
+    );
+  }
+
+  saveSession({
+    access_token: payload.access_token,
+    refresh_token: payload.refresh_token,
+    user: payload.user ? { email: payload.user.email } : session.user
+  });
+}
+
+async function apiRequest(path, options = {}, retry = true) {
+  const session = getStorageSession();
+  const headers = {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${session?.access_token || SUPABASE_ANON_KEY}`,
+    ...options.headers
+  };
+
+  const response = await fetch(`${SUPABASE_URL}${path}`, {
+    ...options,
+    headers
+  });
+
+  if (response.status === 401 && retry && session?.refresh_token) {
+    await refreshSession();
+    return apiRequest(path, options, false);
+  }
+
+  if (!response.ok) {
+    let payload = null;
+    try {
+      payload = await response.json();
+    } catch {
+      payload = null;
+    }
+
+    throw new Error(
+      payload?.msg ||
+      payload?.message ||
+      payload?.error_description ||
+      payload?.hint ||
+      `Supabase error ${response.status}`
+    );
+  }
+
+  if (response.status === 204) return null;
+  const text = await response.text();
+  return text ? JSON.parse(text) : null;
+}
+
+function maybeConsumeMagicLinkTokens() {
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const accessToken = hash.get("access_token");
+  const refreshToken = hash.get("refresh_token");
+  const errorDescription = hash.get("error_description");
+
+  if (errorDescription) {
+    setMessage(errorDescription, true);
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+    return;
+  }
+
+  if (!accessToken || !refreshToken) return;
+
+  const payload = parseJwtPayload(accessToken);
+  saveSession({
+    access_token: accessToken,
+    refresh_token: refreshToken,
+    user: payload?.email ? { email: payload.email } : null
+  });
+  history.replaceState(null, "", window.location.pathname + window.location.search);
+}
+
 async function signOut() {
-  if (!supabase) return;
-  await supabase.auth.signOut();
+  clearSession();
   logoutButton.classList.add("is-hidden");
   welcomeBanner.textContent = "";
   showPanel(loginPanel);
@@ -365,36 +499,35 @@ function renderCrm() {
 
 async function loadLeads() {
   setCrmMessage("Cargando leads...");
-  const { data, error } = await supabase
-    .from("admin_leads")
-    .select("*")
-    .order("brand", { ascending: true });
-
-  if (error) {
+  try {
+    const data = await apiRequest("/rest/v1/admin_leads?select=*&order=brand.asc");
+    leads = data || [];
+    populateThemes();
+    renderCrm();
+    setCrmMessage("");
+  } catch (error) {
     leads = [];
     tbody.innerHTML = '<tr><td colspan="10" class="empty">Ejecuta el SQL de setup en Supabase</td></tr>';
     updateProgress();
     setCrmMessage(getSetupErrorMessage(error), true);
-    return;
   }
-
-  leads = data || [];
-  populateThemes();
-  renderCrm();
-  setCrmMessage("");
 }
 
 async function updateLead(id, patch) {
-  const { error } = await supabase
-    .from("admin_leads")
-    .update({
-      ...patch,
-      updated_at: new Date().toISOString(),
-      updated_by: activeUser?.email || null
-    })
-    .eq("id", id);
-
-  if (error) {
+  try {
+    await apiRequest(`/rest/v1/admin_leads?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=minimal"
+      },
+      body: JSON.stringify({
+        ...patch,
+        updated_at: new Date().toISOString(),
+        updated_by: activeUser?.email || null
+      })
+    });
+  } catch (error) {
     setCrmMessage(getSetupErrorMessage(error), true);
     return false;
   }
@@ -409,27 +542,15 @@ async function updateLead(id, patch) {
 async function getAdminRecord(user) {
   debugAuthStep("Comprobando permisos admin...");
   const email = user.email.toLowerCase();
-  const { data, error } = await supabase
-    .from("admin_users")
-    .select("email, role")
-    .eq("email", email)
-    .maybeSingle();
-
-  if (error) throw error;
-  return data;
+  const data = await apiRequest(`/rest/v1/admin_users?select=email,role&email=eq.${encodeURIComponent(email)}`);
+  return data?.[0] || null;
 }
 
 async function renderSession() {
   debugAuthStep("Leyendo sesion...");
-  const { data, error } = await supabase.auth.getSession();
-  if (error) {
-    setMessage(error.message, true);
-    showPanel(loginPanel);
-    return;
-  }
-
-  const user = data.session?.user;
+  const user = getStoredUser();
   activeUser = user || null;
+
   if (!user?.email) {
     logoutButton.classList.add("is-hidden");
     welcomeBanner.textContent = "";
@@ -451,7 +572,7 @@ async function renderSession() {
     welcomeBanner.textContent = getWelcomeMessage(user.email);
     logoutButton.classList.remove("is-hidden");
     showPanel(adminPanel);
-    loadLeads();
+    await loadLeads();
   } catch (error) {
     welcomeBanner.textContent = "";
     setMessage(getSetupErrorMessage(error), true);
@@ -462,28 +583,22 @@ async function renderSession() {
 if (!isConfigured) {
   showPanel(configPanel);
 } else {
-  supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  maybeConsumeMagicLinkTokens();
   showPanel(loginPanel);
   renderSession();
-
-  supabase.auth.onAuthStateChange(() => {
-    window.setTimeout(() => {
-      renderSession();
-    }, 0);
-  });
 }
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  if (!supabase) return;
 
   setAuthDebug(true);
   setLoading(true);
   setMessage("Login v9: comprobando acceso...");
 
   const form = new FormData(loginForm);
-  const email = form.get("email").trim().toLowerCase();
-  const password = form.get("password").trim();
+  const email = String(form.get("email") || "").trim().toLowerCase();
+  const password = String(form.get("password") || "").trim();
+
   try {
     if (password) {
       await withTimeout(
@@ -594,18 +709,22 @@ groupBtn.addEventListener("click", () => {
 resetBtn.addEventListener("click", async () => {
   if (!window.confirm("Borrar checks, estados y notas de todos los leads?")) return;
 
-  const { error } = await supabase
-    .from("admin_leads")
-    .update({
-      hit: false,
-      status: "pendiente",
-      notes: "",
-      updated_at: new Date().toISOString(),
-      updated_by: activeUser?.email || null
-    })
-    .neq("id", "");
-
-  if (error) {
+  try {
+    await apiRequest("/rest/v1/admin_leads?id=not.is.null", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=minimal"
+      },
+      body: JSON.stringify({
+        hit: false,
+        status: "pendiente",
+        notes: "",
+        updated_at: new Date().toISOString(),
+        updated_by: activeUser?.email || null
+      })
+    });
+  } catch (error) {
     setCrmMessage(getSetupErrorMessage(error), true);
     return;
   }
