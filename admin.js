@@ -591,13 +591,13 @@ if (!isConfigured) {
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  setAuthDebug(true);
-  setLoading(true);
-  setMessage("Login v9: comprobando acceso...");
-
   const form = new FormData(loginForm);
   const email = String(form.get("email") || "").trim().toLowerCase();
   const password = String(form.get("password") || "").trim();
+
+  setAuthDebug(true);
+  setLoading(true);
+  setMessage("Login v9: comprobando acceso...");
 
   try {
     if (password) {
