@@ -76,6 +76,12 @@ function getWelcomeMessage(email) {
 
 function getSetupErrorMessage(error) {
   const message = error?.message || "";
+  if (message.includes("over_email_send_rate_limit")) {
+    return "Espera 35 segundos antes de pedir otro enlace.";
+  }
+  if (message.includes("security purposes") && message.includes("35 seconds")) {
+    return "Espera 35 segundos antes de pedir otro enlace.";
+  }
   if (
     message.includes("admin_users") ||
     message.includes("admin_leads") ||
@@ -428,8 +434,7 @@ loginForm.addEventListener("submit", async (event) => {
   }
 
   setLoading(false);
-
-  setMessage("Te hemos enviado un enlace de acceso al email.");
+  setMessage("Te hemos enviado un enlace de acceso al email. Mira spam o promociones si no aparece enseguida.");
 });
 
 logoutButton.addEventListener("click", signOut);
