@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | VIRAL</title>
+  <link rel="stylesheet" href="admin.css?v=20260616-2" />
+</head>
+<body>
+  <main class="admin-shell">
+    <header class="admin-topbar">
+      <a class="back-link" href="index.html">VIRAL</a>
+      <button id="logoutButton" class="icon-button is-hidden" type="button" aria-label="Cerrar sesion" title="Cerrar sesion">
+        <span aria-hidden="true">X</span>
+      </button>
+    </header>
+
+    <section id="configPanel" class="admin-panel is-hidden" aria-live="polite">
+      <p class="eyebrow">CONFIG</p>
+      <h1>Supabase pendiente</h1>
+      <p class="panel-copy">Rellena <code>supabase-config.js</code> con la URL y la anon key del proyecto.</p>
+    </section>
+
+    <section id="loginPanel" class="admin-panel is-hidden" aria-labelledby="loginTitle">
+      <p class="eyebrow">ADMIN</p>
+      <h1 id="loginTitle">Acceso privado</h1>
+      <form id="loginForm" class="admin-form">
+        <label for="emailInput">Email</label>
+        <div class="input-row">
+          <input id="emailInput" name="email" type="email" autocomplete="email" required />
+          <button class="primary-button" type="submit">Entrar</button>
+        </div>
+      </form>
+      <p id="loginMessage" class="message" role="status"></p>
+    </section>
+
+    <section id="deniedPanel" class="admin-panel is-hidden" aria-live="polite">
+      <p class="eyebrow">SIN PERMISO</p>
+      <h1>Este email no tiene acceso admin</h1>
+      <p class="panel-copy">Pide que lo incluyan en la tabla <code>admin_users</code> de Supabase.</p>
+    </section>
+
+    <section id="adminPanel" class="crm-app is-hidden" aria-labelledby="adminTitle">
+      <header class="crm-header">
+        <div class="brand">
+          <div class="wordmark"><span class="dot"></span> VIRAL - DUQUE CALOPA</div>
+          <h1 id="adminTitle">Potential<br><span>Clients</span></h1>
+          <div class="tagline">CGI / Edit / IA - content for socials, web & whatever it takes.</div>
+        </div>
+        <div class="welcome-banner" id="welcomeBanner" aria-live="polite"></div>
+        <div class="meta">
+          <span id="sessionLabel"></span><br>
+          Role: <span id="roleLabel">admin</span><br>
+          <span id="metaCount"></span> leads
+        </div>
+      </header>
+
+      <div class="progress-wrap">
+        <div class="progress-label">Outreach</div>
+        <div class="bar">
+          <div class="bar-fill" id="barFill"></div>
+          <div class="bar-num" id="barNum">0 / 0 hiteados</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="pill-group" id="catPills">
+          <button class="pill" data-cat="all" aria-pressed="true" type="button">Todos</button>
+          <button class="pill" data-cat="Marca" aria-pressed="false" type="button">Marcas</button>
+          <button class="pill" data-cat="Estudio" aria-pressed="false" type="button">Estudios</button>
+        </div>
+
+        <div class="field">
+          <label for="temaSel">Tematica</label>
+          <select id="temaSel"><option value="all">Todas</option></select>
+        </div>
+
+        <div class="field">
+          <label for="sortSel">Orden</label>
+          <select id="sortSel">
+            <option value="foll_desc">Seguidores abajo</option>
+            <option value="foll_asc">Seguidores arriba</option>
+            <option value="brand_az">Marca A-Z</option>
+            <option value="theme">Tematica</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="statusSel">Estado</label>
+          <select id="statusSel">
+            <option value="all">Todos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="hiteado">Hiteado</option>
+            <option value="respondio">Respondio</option>
+            <option value="cerrado">Cerrado</option>
+            <option value="descartado">Descartado</option>
+          </select>
+        </div>
+
+        <button class="pill standalone-pill" id="groupBtn" aria-pressed="false" type="button">Agrupar x tematica</button>
+
+        <div class="field grow">
+          <label for="search">Buscar</label>
+          <input type="search" id="search" placeholder="marca, persona, @handle, pais..." />
+        </div>
+
+        <button class="ghost" id="resetBtn" type="button">Reset progreso</button>
+      </div>
+
+      <p id="crmMessage" class="crm-message" role="status"></p>
+
+      <div class="table-wrap">
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th class="check-col">OK</th>
+              <th class="sortable" data-sort="brand">Marca / Cuenta <span class="arrow">^</span></th>
+              <th class="sortable" data-sort="theme">Tematica <span class="arrow">^</span></th>
+              <th>Persona de contacto</th>
+              <th>IG personal</th>
+              <th class="sortable" data-sort="followers">Seguidores <span class="arrow">v</span></th>
+              <th>Pais</th>
+              <th>Via</th>
+              <th>Estado</th>
+              <th>Notas</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="admin.js?v=20260616-3"></script>
+</body>
+</html>
