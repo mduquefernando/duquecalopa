@@ -35,6 +35,7 @@ let supabase = null;
 let leads = [];
 let activeUser = null;
 let activeAdminRecord = null;
+let authDebug = false;
 let view = {
   cat: "all",
   theme: "all",
@@ -51,6 +52,15 @@ function showPanel(panel) {
 function setMessage(text, isError = false) {
   loginMessage.textContent = text;
   loginMessage.classList.toggle("is-error", isError);
+}
+
+function setAuthDebug(enabled) {
+  authDebug = enabled;
+}
+
+function debugAuthStep(text) {
+  if (!authDebug) return;
+  setMessage(text);
 }
 
 function setLoading(isLoading) {
@@ -145,6 +155,7 @@ async function sendMagicLink(email) {
 }
 
 async function signInWithPassword(email, password) {
+  debugAuthStep("Pidiendo acceso a Supabase...");
   const url = new URL(`${SUPABASE_URL}/auth/v1/token`);
   url.searchParams.set("grant_type", "password");
 
@@ -174,12 +185,14 @@ async function signInWithPassword(email, password) {
     );
   }
 
+  debugAuthStep("Sesion recibida. Guardando acceso...");
   const { error } = await supabase.auth.setSession({
     access_token: payload.access_token,
     refresh_token: payload.refresh_token
   });
 
   if (error) throw error;
+  debugAuthStep("Sesion guardada.");
 }
 
 async function signOut() {
@@ -394,6 +407,7 @@ async function updateLead(id, patch) {
 }
 
 async function getAdminRecord(user) {
+  debugAuthStep("Comprobando permisos admin...");
   const email = user.email.toLowerCase();
   const { data, error } = await supabase
     .from("admin_users")
@@ -406,6 +420,7 @@ async function getAdminRecord(user) {
 }
 
 async function renderSession() {
+  debugAuthStep("Leyendo sesion...");
   const { data, error } = await supabase.auth.getSession();
   if (error) {
     setMessage(error.message, true);
@@ -462,6 +477,7 @@ loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!supabase) return;
 
+  setAuthDebug(true);
   setLoading(true);
   setMessage("Comprobando acceso...");
 
@@ -475,9 +491,9 @@ loginForm.addEventListener("submit", async (event) => {
         15000,
         "Supabase no ha respondido. Revisa la conexion o prueba de nuevo."
       );
-      setLoading(false);
-      setMessage("Acceso correcto.");
       await renderSession();
+      setLoading(false);
+      setAuthDebug(false);
       return;
     }
 
@@ -489,11 +505,13 @@ loginForm.addEventListener("submit", async (event) => {
     );
   } catch (error) {
     setLoading(false);
+    setAuthDebug(false);
     setMessage(getSetupErrorMessage(error), true);
     return;
   }
 
   setLoading(false);
+  setAuthDebug(false);
   setMessage("Te hemos enviado un enlace de acceso al email. Mira spam o promociones si no aparece enseguida.");
 });
 
