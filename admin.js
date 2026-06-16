@@ -609,7 +609,7 @@ loginForm.addEventListener("submit", async (event) => {
 
   setAuthDebug(true);
   setLoading(true);
-  setMessage("Login v9: comprobando acceso...");
+  setMessage(`Login v14: ${email}`);
 
   try {
     if (password) {
