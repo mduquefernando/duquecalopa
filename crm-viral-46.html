@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VIRAL — Potential Clients</title>
+<style>
+  :root{
+    --bg:#0b0b0c;
+    --panel:#141417;
+    --panel-2:#101012;
+    --ink:#f3f2ec;
+    --ink-soft:#8c8a82;
+    --ink-dim:#5d5b54;
+    --line:#2a2a2f;
+    --line-soft:#1d1d21;
+    --accent:#d8ff3e;
+    --accent-dim:#3a4416;
+    --hot:#ff5b2e;
+    --done:#27c07a;
+    --row-hover:#1a1a1e;
+    --mono:ui-monospace,"SF Mono","Menlo","Consolas","Roboto Mono",monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:13px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;padding:26px clamp(12px,3.5vw,48px) 90px;
+    background-image:radial-gradient(circle at 12% -10%, #16170d 0%, transparent 42%);
+  }
+  ::selection{background:var(--accent);color:#000;}
+
+  /* HEADER */
+  header{
+    border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    padding:24px 26px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px;
+    border-radius:4px;
+  }
+  .brand{display:flex;flex-direction:column;gap:8px;}
+  .wordmark{font-size:12px;letter-spacing:.5em;text-transform:uppercase;font-weight:700;color:var(--ink-soft);
+    display:flex;align-items:center;gap:10px;}
+  .wordmark .dot{width:9px;height:9px;background:var(--accent);display:inline-block;border-radius:50%;
+    box-shadow:0 0 10px 1px var(--accent);}
+  h1{margin:0;font-size:clamp(32px,6vw,62px);line-height:.9;font-weight:800;letter-spacing:-.02em;text-transform:uppercase;}
+  h1 .sub{color:var(--ink-dim);}
+  .tagline{font-size:11px;color:var(--ink-soft);max-width:46ch;letter-spacing:.02em;}
+  .meta{text-align:right;font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.14em;line-height:2;}
+  .meta b{color:var(--accent);font-weight:700;}
+
+  /* PROGRESS */
+  .progress-wrap{margin-top:12px;border:1px solid var(--line);background:var(--panel-2);display:flex;align-items:stretch;border-radius:4px;overflow:hidden;}
+  .progress-label{padding:11px 16px;font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-soft);
+    border-right:1px solid var(--line);white-space:nowrap;display:flex;align-items:center;}
+  .bar{flex:1;position:relative;min-height:42px;background:
+    repeating-linear-gradient(45deg,transparent,transparent 7px,#161618 7px,#161618 8px);}
+  .bar-fill{position:absolute;left:0;top:0;bottom:0;width:0;transition:width .4s cubic-bezier(.2,.8,.2,1);
+    background:linear-gradient(90deg,var(--accent-dim),var(--accent));}
+  .bar-num{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;
+    letter-spacing:.05em;color:var(--ink);}
+
+  /* CONTROLS */
+  .controls{margin-top:12px;display:flex;flex-wrap:wrap;gap:9px;align-items:center;}
+  .pill-group{display:flex;border:1px solid var(--line);background:var(--panel-2);border-radius:4px;overflow:hidden;}
+  .pill{border:0;background:transparent;font-family:var(--mono);cursor:pointer;padding:10px 15px;font-size:10px;
+    text-transform:uppercase;letter-spacing:.13em;color:var(--ink-soft);border-right:1px solid var(--line);}
+  .pill:last-child{border-right:0;}
+  .pill:hover{color:var(--ink);}
+  .pill[aria-pressed="true"]{background:var(--accent);color:#000;font-weight:700;}
+  .field{display:flex;align-items:stretch;border:1px solid var(--line);background:var(--panel-2);border-radius:4px;overflow:hidden;}
+  .field label{padding:0 11px;font-size:9.5px;text-transform:uppercase;letter-spacing:.13em;color:var(--ink-dim);
+    border-right:1px solid var(--line);display:flex;align-items:center;}
+  select,input[type="search"]{font-family:var(--mono);font-size:12px;border:0;background:transparent;color:var(--ink);
+    padding:10px 12px;outline:none;}
+  select option{background:var(--panel);color:var(--ink);}
+  input[type="search"]{min-width:200px;}
+  input[type="search"]::placeholder{color:var(--ink-dim);}
+  select{cursor:pointer;padding-right:26px;}
+  .grow{flex:1;}
+  .ghost{border:1px solid var(--line);background:transparent;cursor:pointer;font-family:var(--mono);padding:10px 14px;
+    font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--ink-soft);border-radius:4px;}
+  .ghost:hover{background:var(--hot);color:#fff;border-color:var(--hot);}
+
+  /* TABLE */
+  .table-wrap{margin-top:12px;border:1px solid var(--line);background:var(--panel-2);overflow-x:auto;border-radius:4px;}
+  table{border-collapse:separate;border-spacing:0;width:100%;min-width:1040px;}
+  thead th{position:sticky;top:0;z-index:2;background:#202024;color:var(--ink);font-size:9.5px;text-transform:uppercase;
+    letter-spacing:.14em;font-weight:600;padding:12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line);}
+  thead th.sortable{cursor:pointer;user-select:none;}
+  thead th.sortable:hover{color:var(--accent);}
+  thead th .arrow{opacity:.3;margin-left:4px;}
+  thead th[data-active="true"]{color:var(--accent);}
+  thead th[data-active="true"] .arrow{opacity:1;}
+  tbody td{padding:13px 12px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+  tbody tr{transition:background .12s;}
+  tbody tr:hover{background:var(--row-hover);}
+  tbody tr.hot td:first-child{box-shadow:inset 3px 0 0 var(--hot);}
+  tbody tr.done{opacity:.5;}
+  tbody tr.done .brandname{text-decoration:line-through;}
+
+  .group-row td{background:linear-gradient(90deg,var(--accent-dim),transparent);color:var(--accent);
+    font-size:10px;text-transform:uppercase;letter-spacing:.18em;font-weight:700;padding:9px 12px;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .group-row td .count{color:var(--ink-soft);font-weight:500;margin-left:8px;}
+
+  .brandname{font-weight:700;font-size:14px;display:block;letter-spacing:-.01em;}
+  .handle{font-size:10.5px;color:var(--ink-dim);}
+  .handle a,.ig a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line);}
+  .handle a:hover,.ig a:hover{color:var(--accent);border-color:var(--accent);}
+  .ig a{color:var(--ink-soft);font-size:11.5px;}
+  .ig .note{color:var(--ink-dim);}
+  .hot-tag{display:inline-block;background:var(--hot);color:#fff;font-size:8.5px;letter-spacing:.12em;
+    text-transform:uppercase;padding:2px 6px;margin-left:7px;vertical-align:middle;font-weight:700;border-radius:2px;}
+
+  .cat-badge{font-size:9px;text-transform:uppercase;letter-spacing:.1em;padding:2px 7px;border-radius:2px;font-weight:700;}
+  .cat-Marca{background:#1d2a30;color:#7fd4e6;}
+  .cat-Estudio{background:#2a2030;color:#d49ae6;}
+
+  .tema{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;border:1px solid var(--line);
+    padding:3px 8px;display:inline-block;white-space:nowrap;color:var(--ink-soft);border-radius:2px;}
+
+  .followers{white-space:nowrap;min-width:118px;}
+  .followers .num{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;}
+  .followers .sub{display:block;font-weight:400;font-size:9.5px;color:var(--ink-dim);margin-top:1px;}
+  .reach{height:3px;background:var(--line);margin-top:5px;border-radius:2px;overflow:hidden;max-width:90px;}
+  .reach span{display:block;height:100%;background:var(--accent);opacity:.8;}
+  .nd{color:var(--ink-dim);font-weight:400;}
+
+  .via{font-size:11px;color:var(--ink-soft);max-width:24ch;}
+  .via.email{color:var(--accent);font-weight:600;}
+
+  .chk{display:flex;align-items:center;justify-content:center;}
+  .chk input{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:1px solid var(--line);
+    background:var(--panel);cursor:pointer;position:relative;margin:0;border-radius:3px;}
+  .chk input:hover{border-color:var(--accent);}
+  .chk input:checked{background:var(--done);border-color:var(--done);}
+  .chk input:checked::after{content:"\2713";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:#04140c;font-size:13px;font-weight:800;}
+  select.status{border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:10px;text-transform:uppercase;
+    letter-spacing:.06em;padding:7px 8px;border-radius:3px;cursor:pointer;}
+  select.status[data-s="respondio"]{background:#2e2a12;color:#ffe27a;border-color:#4a4220;}
+  select.status[data-s="cerrado"]{background:#103122;color:#5cf0a8;border-color:#1d5c3d;}
+  select.status[data-s="descartado"]{background:#222;color:var(--ink-dim);text-decoration:line-through;}
+
+  .notes{min-width:160px;}
+  .notes [contenteditable]{display:block;min-height:34px;border:1px solid var(--line-soft);padding:7px 8px;font-size:11px;
+    outline:none;background:var(--panel);color:var(--ink);border-radius:3px;}
+  .notes [contenteditable]:focus{border-color:var(--accent);background:#15170d;}
+  .notes [contenteditable]:empty::before{content:"+ nota\2026";color:var(--ink-dim);}
+
+  .flag{font-size:13px;}
+
+  footer{margin-top:22px;font-size:10px;color:var(--ink-dim);line-height:1.9;border-top:1px solid var(--line);padding-top:14px;}
+  footer b{color:var(--ink-soft);}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .sw{width:11px;height:11px;display:inline-block;border-radius:2px;}
+  .empty{padding:48px;text-align:center;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.14em;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="wordmark"><span class="dot"></span> VIRAL — DUQUE&nbsp;CALOPA</div>
+    <h1>Potential <span class="sub">Clients</span></h1>
+    <div class="tagline">CGI · Edit · IA — content for socials, web &amp; whatever it takes. Lista viva de marcas &amp; estudios a contactar.</div>
+  </div>
+  <div class="meta">Updated 2026-06-17<br>Prio · <b>USA / UK</b><br><b id="metaCount"></b> leads</div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-label">Outreach</div>
+  <div class="bar"><div class="bar-fill" id="barFill"></div><div class="bar-num" id="barNum">0 / 0 hiteados</div></div>
+</div>
+
+<div class="controls">
+  <div class="pill-group" id="catPills">
+    <button class="pill" data-cat="all" aria-pressed="true">Todos</button>
+    <button class="pill" data-cat="Marca" aria-pressed="false">Marcas</button>
+    <button class="pill" data-cat="Estudio" aria-pressed="false">Estudios</button>
+  </div>
+  <div class="field"><label>Temática</label><select id="temaSel"><option value="all">Todas</option></select></div>
+  <div class="field"><label>Orden</label>
+    <select id="sortSel">
+      <option value="foll_desc">Seguidores ↓</option>
+      <option value="foll_asc">Seguidores ↑</option>
+      <option value="brand_az">Marca A–Z</option>
+      <option value="tema">Temática</option>
+    </select>
+  </div>
+  <div class="field"><label>Estado</label>
+    <select id="statusSel">
+      <option value="all">Todos</option>
+      <option value="pendiente">Pendiente</option>
+      <option value="hiteado">Hiteado</option>
+      <option value="respondio">Respondió</option>
+      <option value="cerrado">Cerrado</option>
+      <option value="descartado">Descartado</option>
+    </select>
+  </div>
+  <button class="pill" id="groupBtn" aria-pressed="false" style="border:1px solid var(--line);background:var(--panel-2);border-radius:4px;">Agrupar x temática</button>
+  <div class="field grow"><label>Buscar</label><input type="search" id="search" placeholder="marca, persona, @handle, país…" /></div>
+  <button class="ghost" id="resetBtn">Reset progreso</button>
+</div>
+
+<div class="table-wrap">
+  <table id="tbl">
+    <thead><tr>
+      <th style="width:40px;">✓</th>
+      <th class="sortable" data-sort="brand">Marca / Cuenta <span class="arrow">↕</span></th>
+      <th>Cat</th>
+      <th class="sortable" data-sort="tema">Temática <span class="arrow">↕</span></th>
+      <th>Persona de contacto</th>
+      <th>IG personal</th>
+      <th class="sortable" data-sort="foll">Seguidores <span class="arrow">↕</span></th>
+      <th>País</th>
+      <th>Vía</th>
+      <th>Estado</th>
+      <th>Notas</th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<footer>
+  <b>Cómo usarlo:</b> check = hiteado · cambia el estado · escribe notas. Se guarda solo en este navegador (localStorage). <b>n/d</b> = seguidores no indexados.
+  <div class="legend">
+    <span><i class="sw" style="background:var(--accent)"></i> activo</span>
+    <span><i class="sw" style="background:var(--done)"></i> hiteado / cerrado</span>
+    <span><i class="sw" style="background:var(--hot)"></i> HOT = encaje fuerte CGI/IA</span>
+    <span><i class="sw" style="background:#7fd4e6"></i> Marca</span>
+    <span><i class="sw" style="background:#d49ae6"></i> Estudio</span>
+  </div>
+</footer>
+
+<script>
+const MAXF = 160000; // para la barra de alcance
+const DATA = [
+  {id:"huni",cat:"Marca",brand:"HUNI",bigHandle:"huniworldwide",tema:"Streetwear futurista",person:"Mona Thomas (fundadora)",ig:[["mona_thomas"]],foll:158000,follLabel:"~158K",country:"🇩🇪",via:"mona@hunidesign.com",email:true,hot:true},
+  {id:"curves",cat:"Marca",brand:"Curves",bigHandle:"curvesathome",tema:"Diseño / homeware",person:"Sean Brown (fundador)",ig:[["byseanbrown"]],foll:106000,follLabel:"~106K",country:"🇨🇦",via:"DM personal"},
+  {id:"hcw",cat:"Marca",brand:"Heaven Can Wait",bigHandle:"__heavencanwait__",tema:"Streetwear",person:"Felix Spooner (fundador)",ig:[["_felixspooner_"]],foll:99000,follLabel:"~99K",country:"🇬🇧",via:"DM personal / web"},
+  {id:"chew",cat:"Marca",brand:"Chew Forever",bigHandle:"chew_forever",tema:"Streetwear",person:"Martin Súder (cofundador)",ig:[["suder.martin"],["kfz_suder"]],foll:79000,follLabel:"~79K",follSub:"marca · pers. n/d",country:"🇨🇿",via:"DM"},
+  {id:"aoos",cat:"Marca",brand:"Always Out Of Stock",bigHandle:"alwaysoutofstock",tema:"Streetwear",person:"KING-MASA (fundador)",ig:[["kingmasa2014"]],foll:61000,follLabel:"~61K",country:"🇯🇵",via:"Email web AOOS"},
+  {id:"ogbff",cat:"Marca",brand:"OGBFF",bigHandle:"ogbff_",tema:"Graphic tees / internet",person:"Lauren Schiller / Angela Ruis",ig:[["schillllller"],["bl0ndita"]],foll:19000,follLabel:"19K / 16K",follSub:"marca ~48K",country:"🇺🇸",via:"DM"},
+  {id:"parallelx",cat:"Marca",brand:"Parallel X Studio",bigHandle:"parallelxstudio",tema:"Accesorios",person:"Fundador no público",ig:[],foll:27000,follLabel:"~27K",follSub:"marca",country:"🇬🇧",via:"DM marca"},
+  {id:"nexusvii",cat:"Marca",brand:"NEXUS VII",bigHandle:"nexusvii.official",tema:"Streetwear técnico",person:"Tomohiro Konno (diseñador)",ig:[["nexus7konno"]],foll:22000,follLabel:"~22K",country:"🇯🇵",via:"Email web nexusvii.jp"},
+  {id:"pierre",cat:"Marca",brand:"Pierre Bassene World",bigHandle:"pierrebassene.world",tema:"Moda digital / CGI",person:"Pierre Bassene (fundador)",ig:[["pierrebassene.world","la marca"]],foll:20000,follLabel:"~20K",country:"🇨🇦",via:"DM marca",hot:true},
+  {id:"finallayer",cat:"Marca",brand:"Final Layer",bigHandle:"finallayer.berlin",tema:"Vintage / archive",person:"Constantin Ungruhe (fundador)",ig:[["constantinungruhe"]],foll:18000,follLabel:"~18K",follSub:"marca · pers. n/d",country:"🇩🇪",via:"Web finallayer.eu"},
+  {id:"hidden",cat:"Marca",brand:"Hidden Characters",bigHandle:"hidden_s_rank",tema:"Streetwear",person:"Anónimo (Chicago)",ig:[["the.wolf.hc","soporte"]],foll:15000,follLabel:"~15K",follSub:"marca",country:"🇺🇸",via:"DM marca"},
+  {id:"dertbag",cat:"Marca",brand:"dertbag",bigHandle:"dertbagus",tema:"Streetwear",person:"Philip Post (atelier)",ig:[["philiplpost"]],foll:14000,follLabel:"~14K",country:"🇺🇸",via:"philip@dertbag.us",email:true},
+  {id:"uuuntld",cat:"Marca",brand:"Uuuntld",bigHandle:"uuuntld",tema:"Artist-led / streetwear",person:"Randy Perez (fundador)",ig:[["rvndyperez"]],foll:13000,follLabel:"~13K",country:"🇺🇸",via:"contact@rvndyperez.com",email:true},
+  {id:"aberizk",cat:"Marca",brand:"ABERIZK",bigHandle:"shop_aberizk",tema:"Vintage / concept store",person:"Allison Aberizk / Justin Xavier",ig:[],foll:9000,follLabel:"~9K",follSub:"marca · LinkedIn",country:"🇺🇸",via:"Web / LinkedIn"},
+  {id:"gumi",cat:"Marca",brand:"GUMI",bigHandle:"gumi.eyewear",tema:"Eyewear / accesorios",person:"Gurina Y. Chae (fundadora)",ig:[["grrina"]],foll:7800,follLabel:"~7.8K",follSub:"marca ~5.7K",country:"🇺🇸",via:"Web gumiverse.com"},
+  {id:"ghetto",cat:"Marca",brand:"Ghetto Rodeo",bigHandle:"ghetto.rodeo",tema:"Streetwear",person:"Brian Saucedo (fundador)",ig:[["ghetto.cowboyy"]],foll:null,follLabel:"n/d",country:"🇺🇸",via:"DM personal"},
+  {id:"humandior",cat:"Marca",brand:"Human Dior",bigHandle:"humandior.store",tema:"Vintage / archive resale",person:"Jonathan Hinguanzo (owner)",ig:[["jonjon.h_"]],foll:null,follLabel:"n/d",country:"🇺🇸",via:"DM personal"},
+  {id:"everything",cat:"Marca",brand:"Everything Extraordinary",bigHandle:"everythingextraordinary",tema:"Streetwear",person:"Corbin Downen (owner)",ig:[["cmdcorbin"]],foll:null,follLabel:"n/d",country:"🇺🇸",via:"DM / LinkedIn"},
+  {id:"yuremane",cat:"Marca",brand:"Yuremane",bigHandle:"yuremane",tema:"Vintage / denim",person:"\"Nik\" (fundador)",ig:[],foll:49000,follLabel:"~49K",follSub:"marca · pers. n/d",country:"🌐",via:"DM / web"},
+  {id:"kamien",cat:"Marca",brand:"Kamien",bigHandle:"kamien.kr",tema:"Workwear / streetwear",person:"No público (Busan)",ig:[],foll:null,follLabel:"n/d",country:"🇰🇷",via:"DM marca"},
+  {id:"advisry",cat:"Marca",brand:"ADVISRY",bigHandle:"advisry",tema:"Fashion autoral / cine",person:"Keith Herron",ig:[["yungrooftop"]],foll:38000,follLabel:"38K / 22K",follSub:"personal / marca 22K",country:"🇺🇸",via:"DM personal"},
+  {id:"ciriaco",cat:"Marca",brand:"CIRIACO",bigHandle:"madebyciriaco",tema:"Accesorios futuristas",person:"Ashley Ciriaco",ig:[["ocairicyelhsa"]],foll:70000,follLabel:"70K / 18K",follSub:"personal / marca 18K",country:"🇺🇸",via:"DM personal",hot:true},
+  {id:"cheyennekimora",cat:"Marca",brand:"Cheyenne Kimora",bigHandle:"cheyennekimora",tema:"Handmade / lujo objeto",person:"Cheyenne Kimora",ig:[],foll:20000,follLabel:"~20K",follSub:"marca",country:"🇺🇸",via:"DM marca"},
+  {id:"beepybella",cat:"Marca",brand:"Beepy Bella",bigHandle:"beepybella",tema:"Joyería surreal / CGI",person:"Isabella Lalonde",ig:[["isabellalalonde"]],foll:115000,follLabel:"~115K",follSub:"personal/marca · muy CGI",country:"🇺🇸",via:"DM personal / marca",hot:true},
+  {id:"fangnyc",cat:"Marca",brand:"FANG NYC",bigHandle:"fang.nyc",tema:"Knitwear queer",person:"Fang Guo",ig:[["fang.guo"]],foll:null,follLabel:"n/d",country:"🇺🇸",via:"DM founder"},
+  {id:"tombogo",cat:"Marca",brand:"TOMBOGO",bigHandle:"tombogo",tema:"Utility experimental",person:"Tommy Bogo",ig:[["tommybogo"]],foll:null,follLabel:"n/d",country:"🇺🇸",via:"DM founder"},
+  {id:"muddpearl",cat:"Marca",brand:"Mudd Pearl",bigHandle:"muddpearl",tema:"Joyería orgánica / raw",person:"Mary Anderson / Yasmin Moon",ig:[["mariannederson"],["yasminmoonmoon"]],foll:21000,follLabel:"~21K",follSub:"marca · Euphoria-adjacent",country:"🇺🇸",via:"DM marca / founders"},
+  {id:"cafeforgot",cat:"Marca",brand:"Cafe Forgot",bigHandle:"cafe_forgot",tema:"Concept store / curaduría",person:"Vita Haas / Lucy Weisner",ig:[],foll:95000,follLabel:"~95K",follSub:"marca · red de diseñadores",country:"🇺🇸",via:"info@cafeforgot.com",email:true},
+  {id:"sc103",cat:"Marca",brand:"SC103",bigHandle:"sc103_official",tema:"Art-world / handmade",person:"Claire McKinney / Sophie Andes-Gascon",ig:[],foll:38000,follLabel:"~38K",follSub:"marca",country:"🇺🇸",via:"DM marca"},
+  {id:"gauntlettcheng",cat:"Marca",brand:"Gauntlett Cheng",bigHandle:"gauntlettcheng",tema:"Downtown NY / emocional",person:"Esther Gauntlett / Jenny Cheng",ig:[],foll:26000,follLabel:"~26K",follSub:"marca",country:"🇺🇸",via:"DM marca"},
+  {id:"jamesveloria",cat:"Marca",brand:"James Veloria",bigHandle:"jamesveloria",tema:"Vintage / archive",person:"Collin James / Brandon Veloria",ig:[],foll:39000,follLabel:"~39K",follSub:"marca · comunidad fuerte",country:"🇺🇸",via:"DM marca"},
+  {id:"colbo",cat:"Marca",brand:"Colbo",bigHandle:"colbo.nyc",tema:"Concept store",person:"Tal Silberstein",ig:[],foll:56000,follLabel:"~56K",follSub:"tienda",country:"🇺🇸",via:"DM / tienda"},
+  {id:"meals",cat:"Marca",brand:"Meals Clothing",bigHandle:"meals.clothing",tema:"Humor conceptual",person:"Sam Salad / Rebma",ig:[],foll:28000,follLabel:"~28K",follSub:"marca · food-fashion",country:"🇺🇸",via:"DM marca"},
+  {id:"poliquant",cat:"Marca",brand:"POLIQUANT",bigHandle:"poliquant",tema:"Techwear / función",person:"Junichi Sugita",ig:[],foll:16000,follLabel:"~16K",follSub:"marca · Tokyo",country:"🇯🇵",via:"DM marca"},
+  {id:"cyderboy",cat:"Marca",brand:"CYDERBOY / CYDERHOUSE",bigHandle:"cyderboy",tema:"Handmade revamp",person:"Yuji Okamoto",ig:[["ug_okamoto"]],foll:7300,follLabel:"~7.3K",follSub:"personal · Ura-Hara",country:"🇯🇵",via:"DM personal"},
+  {id:"pronounce",cat:"Marca",brand:"PRONOUNCE",bigHandle:"_pronounce",tema:"Sastrería autoral",person:"Yushan Li / Jun Zhou",ig:[],foll:39000,follLabel:"~39K",follSub:"marca · identidad asiática",country:"🇨🇳🇬🇧",via:"DM marca"},
+  {id:"commission",cat:"Marca",brand:"Commission",bigHandle:"commissionofficial",tema:"Sastrería / nostalgia",person:"Dylan Cao / Jin Kay",ig:[],foll:76000,follLabel:"~76K",follSub:"marca · nostalgia asiática",country:"🇺🇸",via:"DM marca"},
+  {id:"loudallas",cat:"Marca",brand:"Lou Dallas",bigHandle:"lou_dallas",tema:"Fantasy / upcycling",person:"Raffaella Hanley",ig:[],foll:14000,follLabel:"~14K",follSub:"marca · Euphoria-adjacent",country:"🇺🇸",via:"DM marca"},
+  {id:"marlandbackus",cat:"Marca",brand:"Marland Backus",bigHandle:"marlandbackus",tema:"Joyería industrial / surreal",person:"Marland Backus",ig:[["marzipanjupiter"]],foll:33000,follLabel:"33K / 5K",follSub:"personal / marca 5K",country:"🇺🇸🇯🇵",via:"info@marlandbackus.com",email:true},
+  {id:"runnybabbit",cat:"Marca",brand:"Runny Babbit",bigHandle:"runny___babbit",tema:"Handmade escultural",person:"Diseñador n/d",ig:[],foll:1900,follLabel:"~1.9K",follSub:"muy pequeño · Cafe Forgot world",country:"🇺🇸",via:"DM marca"},
+  {id:"gavin",cat:"Estudio",brand:"Gavin South",bigHandle:"gilfgavin",tema:"Creador / edit",person:"Gavin South",ig:[["gilfgavin","la cuenta"]],foll:82000,follLabel:"~82K",country:"🇺🇸",via:"DM / colab"},
+  {id:"henry",cat:"Estudio",brand:"Henry",bigHandle:"henry__irl",tema:"Fotógrafo / creador",person:"Henry (= themanwhocapturedsunshine)",ig:[["themanwhocapturedsunshine","alt"]],foll:27000,follLabel:"~27K",country:"🌐",via:"DM / colab"},
+  {id:"blulab",cat:"Estudio",brand:"blulab",bigHandle:"blulab.inc",tema:"Estudio CGI",person:"Fundador n/d",ig:[],foll:15000,follLabel:"~15K",follSub:"cuenta",country:"🌐",via:"DM colab"},
+  {id:"icestudios",cat:"Estudio",brand:"Ice Studios",bigHandle:"icestudios.co",tema:"Agencia creativa",person:"Renell Medrano & Jess Moloney",ig:[],foll:null,follLabel:"n/d",country:"🇺🇸🇬🇧",via:"Web icestudios.co — meterte como talento"},
+  {id:"typevarious",cat:"Estudio",brand:"typevarious",bigHandle:"typevarious",tema:"Estudio diseño (sin verif.)",person:"No identificado",ig:[],foll:null,follLabel:"n/d",country:"🌐",via:"DM"},
+  {id:"isuperside",cat:"Estudio",brand:"isuperside",bigHandle:"isuperside",tema:"Creativo (sin verif.)",person:"No identificado",ig:[],foll:null,follLabel:"n/d",country:"🌐",via:"DM"},
+];
+
+const LS_KEY="viral_crm_46_v1";
+let saved=JSON.parse(localStorage.getItem(LS_KEY)||"{}");
+const persist=()=>localStorage.setItem(LS_KEY,JSON.stringify(saved));
+const rec=id=>{if(!saved[id])saved[id]={hit:false,status:"pendiente",notes:""};return saved[id];};
+let view={cat:"all",tema:"all",sort:"foll_desc",status:"all",q:"",group:false};
+const tbody=document.getElementById("tbody");
+const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+
+function igCell(r){
+  if(!r.ig||!r.ig.length)return '<span class="nd">—</span>';
+  return r.ig.map(h=>`<span class="ig"><a href="https://instagram.com/${h[0]}" target="_blank" rel="noopener">@${h[0]}</a>${h[1]?` <span class="note">(${h[1]})</span>`:""}</span>`).join("<br>");
+}
+function follCell(r){
+  if(r.foll==null)return '<span class="nd">n/d</span>';
+  const w=Math.max(4,Math.min(100,Math.round(r.foll/MAXF*100)));
+  return `<span class="num">${r.follLabel}</span>${r.follSub?`<span class="sub">${esc(r.follSub)}</span>`:""}<div class="reach"><span style="width:${w}%"></span></div>`;
+}
+function matches(r){
+  if(view.cat!=="all"&&r.cat!==view.cat)return false;
+  if(view.tema!=="all"&&r.tema!==view.tema)return false;
+  if(view.status!=="all"&&rec(r.id).status!==view.status)return false;
+  if(view.q){const hay=(r.brand+" "+r.person+" "+r.bigHandle+" "+r.tema+" "+r.country+" "+(r.ig||[]).map(x=>x[0]).join(" ")).toLowerCase();if(!hay.includes(view.q.toLowerCase()))return false;}
+  return true;
+}
+function sortRows(rows){
+  const fv=r=>r.foll==null?-1:r.foll;
+  const by={foll_desc:(a,b)=>fv(b)-fv(a)||a.brand.localeCompare(b.brand),foll_asc:(a,b)=>fv(a)-fv(b)||a.brand.localeCompare(b.brand),brand_az:(a,b)=>a.brand.localeCompare(b.brand),tema:(a,b)=>a.tema.localeCompare(b.tema)||fv(b)-fv(a)}[view.sort];
+  return rows.slice().sort(by);
+}
+function rowHTML(r){
+  const s=rec(r.id);
+  const cls=[s.hit||s.status==="cerrado"?"done":"",r.hot?"hot":""].join(" ").trim();
+  return `<tr class="${cls}" data-id="${r.id}">
+    <td><div class="chk"><input type="checkbox" data-act="hit" ${s.hit?"checked":""}></div></td>
+    <td><span class="brandname">${esc(r.brand)}${r.hot?'<span class="hot-tag">hot</span>':""}</span><span class="handle"><a href="https://instagram.com/${r.bigHandle}" target="_blank" rel="noopener">@${r.bigHandle}</a></span></td>
+    <td><span class="cat-badge cat-${r.cat}">${r.cat}</span></td>
+    <td><span class="tema">${esc(r.tema)}</span></td>
+    <td>${esc(r.person)}</td>
+    <td>${igCell(r)}</td>
+    <td class="followers">${follCell(r)}</td>
+    <td><span class="flag">${r.country}</span></td>
+    <td class="via ${r.email?"email":""}">${esc(r.via)}</td>
+    <td><select class="status" data-act="status" data-s="${s.status}">
+      ${["pendiente","hiteado","respondio","cerrado","descartado"].map(o=>`<option value="${o}"${s.status===o?" selected":""}>${o[0].toUpperCase()+o.slice(1)}</option>`).join("")}
+    </select></td>
+    <td class="notes"><div contenteditable data-act="notes">${esc(s.notes)}</div></td>
+  </tr>`;
+}
+function render(){
+  const rows=DATA.filter(matches);
+  let html="";
+  if(!rows.length)html=`<tr><td colspan="11" class="empty">Sin resultados</td></tr>`;
+  else if(view.group){
+    const g={};rows.forEach(r=>{(g[r.tema]=g[r.tema]||[]).push(r);});
+    Object.keys(g).sort().forEach(t=>{html+=`<tr class="group-row"><td colspan="11">${esc(t)}<span class="count">${g[t].length}</span></td></tr>`+sortRows(g[t]).map(rowHTML).join("");});
+  } else html=sortRows(rows).map(rowHTML).join("");
+  tbody.innerHTML=html;
+  const total=DATA.length,done=DATA.filter(r=>rec(r.id).hit).length;
+  document.getElementById("barFill").style.width=(total?done/total*100:0)+"%";
+  document.getElementById("barNum").textContent=`${done} / ${total} hiteados`;
+  document.getElementById("metaCount").textContent=total;
+}
+tbody.addEventListener("change",e=>{
+  const tr=e.target.closest("tr");if(!tr)return;const id=tr.dataset.id,a=e.target.dataset.act;
+  if(a==="hit"){rec(id).hit=e.target.checked;if(e.target.checked&&rec(id).status==="pendiente")rec(id).status="hiteado";}
+  if(a==="status"){rec(id).status=e.target.value;if(["cerrado","hiteado"].includes(e.target.value))rec(id).hit=true;}
+  persist();render();
+});
+tbody.addEventListener("input",e=>{if(e.target.dataset.act==="notes"){rec(e.target.closest("tr").dataset.id).notes=e.target.textContent;persist();}});
+document.getElementById("catPills").addEventListener("click",e=>{const b=e.target.closest(".pill");if(!b||!b.dataset.cat)return;view.cat=b.dataset.cat;document.querySelectorAll("#catPills .pill").forEach(p=>p.setAttribute("aria-pressed",p===b));render();});
+document.getElementById("temaSel").addEventListener("change",e=>{view.tema=e.target.value;render();});
+document.getElementById("sortSel").addEventListener("change",e=>{view.sort=e.target.value;syncArrows();render();});
+document.getElementById("statusSel").addEventListener("change",e=>{view.status=e.target.value;render();});
+document.getElementById("search").addEventListener("input",e=>{view.q=e.target.value.trim();render();});
+document.getElementById("groupBtn").addEventListener("click",e=>{view.group=!view.group;e.currentTarget.setAttribute("aria-pressed",view.group);render();});
+document.getElementById("resetBtn").addEventListener("click",()=>{if(confirm("¿Borrar tu progreso (checks, estados, notas)?")){saved={};persist();render();}});
+document.querySelectorAll("th.sortable").forEach(th=>th.addEventListener("click",()=>{const k=th.dataset.sort;if(k==="foll")view.sort=view.sort==="foll_desc"?"foll_asc":"foll_desc";if(k==="brand")view.sort="brand_az";if(k==="tema")view.sort="tema";document.getElementById("sortSel").value=view.sort;syncArrows();render();}));
+function syncArrows(){document.querySelectorAll("th.sortable").forEach(th=>{const k=th.dataset.sort;const act=(k==="foll"&&view.sort.startsWith("foll"))||(k==="brand"&&view.sort==="brand_az")||(k==="tema"&&view.sort==="tema");th.dataset.active=act;const ar=th.querySelector(".arrow");if(k==="foll")ar.textContent=view.sort==="foll_asc"?"↑":"↓";});}
+(function(){const t=[...new Set(DATA.map(r=>r.tema))].sort(),s=document.getElementById("temaSel");t.forEach(x=>{const o=document.createElement("option");o.value=x;o.textContent=x;s.appendChild(o);});})();
+syncArrows();render();
+</script>
+</body>
+</html>
