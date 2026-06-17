@@ -32,6 +32,29 @@ const isConfigured =
 
 const SESSION_KEY = "viral_admin_session_v2";
 const LEGACY_SESSION_KEYS = ["viral_admin_session"];
+const STATIC_LEAD_STATE_KEY = "viral_admin_static_leads_v1";
+const EXTRA_LEADS = [
+  { id: "advisry", cat: "Marca", brand: "ADVISRY", handle: "advisry", theme: "Fashion autoral / cine", contact_person: "Keith Herron", contact_instagrams: [{ handle: "yungrooftop" }], followers: 38000, followers_label: "38K / 22K", followers_sub: "personal / marca 22K", country: "US", via: "DM personal", is_email: false, is_hot: false },
+  { id: "ciriaco", cat: "Marca", brand: "CIRIACO", handle: "madebyciriaco", theme: "Accesorios futuristas", contact_person: "Ashley Ciriaco", contact_instagrams: [{ handle: "ocairicyelhsa" }], followers: 70000, followers_label: "70K / 18K", followers_sub: "personal / marca 18K", country: "US", via: "DM personal", is_email: false, is_hot: true },
+  { id: "cheyennekimora", cat: "Marca", brand: "Cheyenne Kimora", handle: "cheyennekimora", theme: "Handmade / lujo objeto", contact_person: "Cheyenne Kimora", contact_instagrams: [], followers: 20000, followers_label: "~20K", followers_sub: "marca", country: "US", via: "DM marca", is_email: false, is_hot: false },
+  { id: "beepybella", cat: "Marca", brand: "Beepy Bella", handle: "beepybella", theme: "Joyeria surreal / CGI", contact_person: "Isabella Lalonde", contact_instagrams: [{ handle: "isabellalalonde" }], followers: 115000, followers_label: "~115K", followers_sub: "personal/marca - muy CGI", country: "US", via: "DM personal / marca", is_email: false, is_hot: true },
+  { id: "fangnyc", cat: "Marca", brand: "FANG NYC", handle: "fang.nyc", theme: "Knitwear queer", contact_person: "Fang Guo", contact_instagrams: [{ handle: "fang.guo" }], followers: null, followers_label: "n/d", followers_sub: null, country: "US", via: "DM founder", is_email: false, is_hot: false },
+  { id: "tombogo", cat: "Marca", brand: "TOMBOGO", handle: "tombogo", theme: "Utility experimental", contact_person: "Tommy Bogo", contact_instagrams: [{ handle: "tommybogo" }], followers: null, followers_label: "n/d", followers_sub: null, country: "US", via: "DM founder", is_email: false, is_hot: false },
+  { id: "muddpearl", cat: "Marca", brand: "Mudd Pearl", handle: "muddpearl", theme: "Joyeria organica / raw", contact_person: "Mary Anderson / Yasmin Moon", contact_instagrams: [{ handle: "mariannederson" }, { handle: "yasminmoonmoon" }], followers: 21000, followers_label: "~21K", followers_sub: "marca - Euphoria-adjacent", country: "US", via: "DM marca / founders", is_email: false, is_hot: false },
+  { id: "cafeforgot", cat: "Marca", brand: "Cafe Forgot", handle: "cafe_forgot", theme: "Concept store / curaduria", contact_person: "Vita Haas / Lucy Weisner", contact_instagrams: [], followers: 95000, followers_label: "~95K", followers_sub: "marca - red de disenadores", country: "US", via: "info@cafeforgot.com", is_email: true, is_hot: false },
+  { id: "sc103", cat: "Marca", brand: "SC103", handle: "sc103_official", theme: "Art-world / handmade", contact_person: "Claire McKinney / Sophie Andes-Gascon", contact_instagrams: [], followers: 38000, followers_label: "~38K", followers_sub: "marca", country: "US", via: "DM marca", is_email: false, is_hot: false },
+  { id: "gauntlettcheng", cat: "Marca", brand: "Gauntlett Cheng", handle: "gauntlettcheng", theme: "Downtown NY / emocional", contact_person: "Esther Gauntlett / Jenny Cheng", contact_instagrams: [], followers: 26000, followers_label: "~26K", followers_sub: "marca", country: "US", via: "DM marca", is_email: false, is_hot: false },
+  { id: "jamesveloria", cat: "Marca", brand: "James Veloria", handle: "jamesveloria", theme: "Vintage / archive", contact_person: "Collin James / Brandon Veloria", contact_instagrams: [], followers: 39000, followers_label: "~39K", followers_sub: "marca - comunidad fuerte", country: "US", via: "DM marca", is_email: false, is_hot: false },
+  { id: "colbo", cat: "Marca", brand: "Colbo", handle: "colbo.nyc", theme: "Concept store", contact_person: "Tal Silberstein", contact_instagrams: [], followers: 56000, followers_label: "~56K", followers_sub: "tienda", country: "US", via: "DM / tienda", is_email: false, is_hot: false },
+  { id: "meals", cat: "Marca", brand: "Meals Clothing", handle: "meals.clothing", theme: "Humor conceptual", contact_person: "Sam Salad / Rebma", contact_instagrams: [], followers: 28000, followers_label: "~28K", followers_sub: "marca - food-fashion", country: "US", via: "DM marca", is_email: false, is_hot: false },
+  { id: "poliquant", cat: "Marca", brand: "POLIQUANT", handle: "poliquant", theme: "Techwear / funcion", contact_person: "Junichi Sugita", contact_instagrams: [], followers: 16000, followers_label: "~16K", followers_sub: "marca - Tokyo", country: "JP", via: "DM marca", is_email: false, is_hot: false },
+  { id: "cyderboy", cat: "Marca", brand: "CYDERBOY / CYDERHOUSE", handle: "cyderboy", theme: "Handmade revamp", contact_person: "Yuji Okamoto", contact_instagrams: [{ handle: "ug_okamoto" }], followers: 7300, followers_label: "~7.3K", followers_sub: "personal - Ura-Hara", country: "JP", via: "DM personal", is_email: false, is_hot: false },
+  { id: "pronounce", cat: "Marca", brand: "PRONOUNCE", handle: "_pronounce", theme: "Sastreria autoral", contact_person: "Yushan Li / Jun Zhou", contact_instagrams: [], followers: 39000, followers_label: "~39K", followers_sub: "marca - identidad asiatica", country: "CN / UK", via: "DM marca", is_email: false, is_hot: false },
+  { id: "commission", cat: "Marca", brand: "Commission", handle: "commissionofficial", theme: "Sastreria / nostalgia", contact_person: "Dylan Cao / Jin Kay", contact_instagrams: [], followers: 76000, followers_label: "~76K", followers_sub: "marca - nostalgia asiatica", country: "US", via: "DM marca", is_email: false, is_hot: false },
+  { id: "loudallas", cat: "Marca", brand: "Lou Dallas", handle: "lou_dallas", theme: "Fantasy / upcycling", contact_person: "Raffaella Hanley", contact_instagrams: [], followers: 14000, followers_label: "~14K", followers_sub: "marca - Euphoria-adjacent", country: "US", via: "DM marca", is_email: false, is_hot: false },
+  { id: "marlandbackus", cat: "Marca", brand: "Marland Backus", handle: "marlandbackus", theme: "Joyeria industrial / surreal", contact_person: "Marland Backus", contact_instagrams: [{ handle: "marzipanjupiter" }], followers: 33000, followers_label: "33K / 5K", followers_sub: "personal / marca 5K", country: "US / JP", via: "info@marlandbackus.com", is_email: true, is_hot: false },
+  { id: "runnybabbit", cat: "Marca", brand: "Runny Babbit", handle: "runny___babbit", theme: "Handmade escultural", contact_person: "Disenador n/d", contact_instagrams: [], followers: 1900, followers_label: "~1.9K", followers_sub: "muy pequeno - Cafe Forgot world", country: "US", via: "DM marca", is_email: false, is_hot: false }
+];
 
 let leads = [];
 let activeUser = null;
@@ -132,6 +155,52 @@ function clearLegacySessions() {
   LEGACY_SESSION_KEYS.forEach((key) => {
     window.localStorage.removeItem(key);
   });
+}
+
+function getStaticLeadState() {
+  try {
+    return JSON.parse(window.localStorage.getItem(STATIC_LEAD_STATE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function saveStaticLeadState(state) {
+  window.localStorage.setItem(STATIC_LEAD_STATE_KEY, JSON.stringify(state));
+}
+
+function getMergedLeads(rows) {
+  const seen = new Set(rows.map((lead) => lead.id));
+  const state = getStaticLeadState();
+  const staticRows = EXTRA_LEADS
+    .filter((lead) => !seen.has(lead.id))
+    .map((lead) => ({
+      hit: false,
+      status: "pendiente",
+      notes: "",
+      ...lead,
+      ...(state[lead.id] || {}),
+      _isStaticLead: true
+    }));
+
+  return [...rows, ...staticRows];
+}
+
+function updateStaticLead(id, patch) {
+  const state = getStaticLeadState();
+  state[id] = {
+    hit: false,
+    status: "pendiente",
+    notes: "",
+    ...(state[id] || {}),
+    ...patch
+  };
+  saveStaticLeadState(state);
+  setCrmMessage("Guardado en este navegador");
+  window.setTimeout(() => {
+    if (crmMessage.textContent === "Guardado en este navegador") setCrmMessage("");
+  }, 1200);
+  return true;
 }
 
 function parseJwtPayload(token) {
@@ -508,7 +577,7 @@ async function loadLeads() {
   setCrmMessage("Cargando leads...");
   try {
     const data = await apiRequest("/rest/v1/admin_leads?select=*&order=brand.asc");
-    leads = data || [];
+    leads = getMergedLeads(data || []);
     populateThemes();
     renderCrm();
     setCrmMessage("");
@@ -521,6 +590,12 @@ async function loadLeads() {
 }
 
 async function updateLead(id, patch) {
+  const lead = leads.find((item) => item.id === id);
+  if (lead?._isStaticLead) {
+    Object.assign(lead, patch);
+    return updateStaticLead(id, patch);
+  }
+
   try {
     await apiRequest(`/rest/v1/admin_leads?id=eq.${encodeURIComponent(id)}`, {
       method: "PATCH",
@@ -720,6 +795,7 @@ groupBtn.addEventListener("click", () => {
 
 resetBtn.addEventListener("click", async () => {
   if (!window.confirm("Borrar checks, estados y notas de todos los leads?")) return;
+  saveStaticLeadState({});
 
   try {
     await apiRequest("/rest/v1/admin_leads?id=not.is.null", {
