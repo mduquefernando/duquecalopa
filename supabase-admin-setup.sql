@@ -46,6 +46,7 @@ create table if not exists public.admin_leads (
 alter table public.admin_leads enable row level security;
 
 drop policy if exists "Admins can read leads" on public.admin_leads;
+drop policy if exists "Admins can insert leads" on public.admin_leads;
 drop policy if exists "Admins can update leads" on public.admin_leads;
 
 create policy "Admins can read leads"
@@ -69,6 +70,17 @@ using (
     where lower(admin_users.email) = lower(auth.jwt() ->> 'email')
   )
 )
+with check (
+  exists (
+    select 1 from public.admin_users
+    where lower(admin_users.email) = lower(auth.jwt() ->> 'email')
+  )
+);
+
+create policy "Admins can insert leads"
+on public.admin_leads
+for insert
+to authenticated
 with check (
   exists (
     select 1 from public.admin_users
@@ -126,7 +138,16 @@ values
   ('commission', 'Marca', 'Commission', 'commissionofficial', 'Sastreria / nostalgia', 'Dylan Cao / Jin Kay', '[]', 76000, '~76K', 'marca - nostalgia asiatica', 'US', 'DM marca', false, false),
   ('loudallas', 'Marca', 'Lou Dallas', 'lou_dallas', 'Fantasy / upcycling', 'Raffaella Hanley', '[]', 14000, '~14K', 'marca - Euphoria-adjacent', 'US', 'DM marca', false, false),
   ('marlandbackus', 'Marca', 'Marland Backus', 'marlandbackus', 'Joyeria industrial / surreal', 'Marland Backus', '[{"handle":"marzipanjupiter"}]', 33000, '33K / 5K', 'personal / marca 5K', 'US / JP', 'info@marlandbackus.com', true, false),
-  ('runnybabbit', 'Marca', 'Runny Babbit', 'runny___babbit', 'Handmade escultural', 'Disenador n/d', '[]', 1900, '~1.9K', 'muy pequeno - Cafe Forgot world', 'US', 'DM marca', false, false)
+  ('runnybabbit', 'Marca', 'Runny Babbit', 'runny___babbit', 'Handmade escultural', 'Disenador n/d', '[]', 1900, '~1.9K', 'muy pequeno - Cafe Forgot world', 'US', 'DM marca', false, false),
+  ('marshalcrews', 'Estudio', 'Marsh / Marshal Crews', 'marshalcrews', 'Creador / espacio', 'Marsh', '[]', 367787, '~368K', null, 'US', 'DM', false, false),
+  ('outofcore', 'Marca', 'Out of Core', 'out.of.core', 'Eyewear', 'n/d', '[]', 12940, '~12.9K', null, 'Global', 'DM marca', false, false),
+  ('ravemoreberlin', 'Estudio', 'Ravemore Berlin', 'ravemoreberlin', 'Rave / eventos', 'n/d', '[]', 101318, '~101K', null, 'DE', 'DM', false, false),
+  ('sume78', 'Marca', 'Sume Apparel', 'sume.78', 'Streetwear / apparel', 'n/d', '[]', 70900, '~71K', null, 'US', 'team@sumeapparel.com', true, false),
+  ('aesirstudios', 'Marca', 'Aesir Studios', 'aesir.studios', 'Designer brand', 'n/d (germano-vietnamita)', '[]', 81855, '~82K', null, 'DE', 'DM marca', false, false),
+  ('peoplesense', 'Marca', 'Peoplesense', '_peoplesense_', 'Raw denim', 'n/d', '[]', 75378, '~75K', 'peoplestyle.shop', 'Global', 'Web peoplestyle.shop', false, false),
+  ('repartostudio', 'Estudio', 'Reparto Studio', 'repartostudio', 'Estudio creativo / personajes', 'n/d', '[]', 16968, '~17K', null, 'Global', 'agency@lobby.pr', true, false),
+  ('crvdae', 'Marca', 'CRVDAE', 'crvdae', 'Denim / fashion', 'n/d', '[]', 101621, '~102K', null, 'Global', 'info@crvdae.com', true, false),
+  ('belvet', 'Marca', 'BELVET', 'belvet.jp', 'Workwear (JP)', 'n/d', '[]', 99436, '~99K', null, 'JP', 'DM / online store', false, false)
 on conflict (id) do update set
   cat = excluded.cat,
   brand = excluded.brand,

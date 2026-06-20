@@ -33,6 +33,7 @@ const isConfigured =
 const SESSION_KEY = "viral_admin_session_v2";
 const LEGACY_SESSION_KEYS = ["viral_admin_session"];
 const STATIC_LEAD_STATE_KEY = "viral_admin_static_leads_v1";
+const SHARED_REFRESH_MS = 15000;
 const EXTRA_LEADS = [
   { id: "advisry", cat: "Marca", brand: "ADVISRY", handle: "advisry", theme: "Fashion autoral / cine", contact_person: "Keith Herron", contact_instagrams: [{ handle: "yungrooftop" }], followers: 38000, followers_label: "38K / 22K", followers_sub: "personal / marca 22K", country: "US", via: "DM personal", is_email: false, is_hot: false },
   { id: "ciriaco", cat: "Marca", brand: "CIRIACO", handle: "madebyciriaco", theme: "Accesorios futuristas", contact_person: "Ashley Ciriaco", contact_instagrams: [{ handle: "ocairicyelhsa" }], followers: 70000, followers_label: "70K / 18K", followers_sub: "personal / marca 18K", country: "US", via: "DM personal", is_email: false, is_hot: true },
@@ -69,6 +70,8 @@ let leads = [];
 let activeUser = null;
 let activeAdminRecord = null;
 let authDebug = false;
+let sharedRefreshTimer = 0;
+let isLoadingLeads = false;
 let view = {
   cat: "all",
   theme: "all",
@@ -178,6 +181,49 @@ function saveStaticLeadState(state) {
   window.localStorage.setItem(STATIC_LEAD_STATE_KEY, JSON.stringify(state));
 }
 
+function removeStaticLeadState(id) {
+  const state = getStaticLeadState();
+  if (!state[id]) return;
+  delete state[id];
+  saveStaticLeadState(state);
+}
+
+function toSharedLeadPayload(lead, patch = {}) {
+  const merged = {
+    hit: false,
+    status: "pendiente",
+    notes: "",
+    ...lead,
+    ...patch
+  };
+
+  return {
+    id: merged.id,
+    cat: merged.cat,
+    brand: merged.brand,
+    handle: merged.handle,
+    theme: merged.theme,
+    contact_person: merged.contact_person,
+    contact_instagrams: merged.contact_instagrams || [],
+    followers: merged.followers,
+    followers_label: merged.followers_label || "n/d",
+    followers_sub: merged.followers_sub || null,
+    country: merged.country,
+    via: merged.via,
+    is_email: Boolean(merged.is_email),
+    is_hot: Boolean(merged.is_hot),
+    hit: Boolean(merged.hit),
+    status: merged.status || "pendiente",
+    notes: merged.notes || "",
+    updated_at: new Date().toISOString(),
+    updated_by: activeUser?.email || null
+  };
+}
+
+function hasPendingNotesEdit() {
+  return leads.some((lead) => lead.notesTimer) || document.activeElement?.dataset?.act === "notes";
+}
+
 function getMergedLeads(rows) {
   const seen = new Set(rows.map((lead) => lead.id));
   const state = getStaticLeadState();
@@ -193,6 +239,24 @@ function getMergedLeads(rows) {
     }));
 
   return [...rows, ...staticRows];
+}
+
+function getMissingExtraLeads(rows) {
+  const seen = new Set(rows.map((lead) => lead.id));
+  return EXTRA_LEADS.filter((lead) => !seen.has(lead.id));
+}
+
+async function upsertSharedLeads(rows) {
+  if (!rows.length) return;
+
+  await apiRequest("/rest/v1/admin_leads?on_conflict=id", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Prefer: "resolution=merge-duplicates,return=minimal"
+    },
+    body: JSON.stringify(rows.map((lead) => toSharedLeadPayload(lead)))
+  });
 }
 
 function updateStaticLead(id, patch) {
@@ -417,6 +481,7 @@ function maybeConsumeMagicLinkTokens() {
 
 async function signOut() {
   clearSession();
+  stopSharedRefresh();
   logoutButton.classList.add("is-hidden");
   welcomeBanner.textContent = "";
   showPanel(loginPanel);
@@ -583,9 +648,18 @@ function renderCrm() {
 }
 
 async function loadLeads() {
+  if (isLoadingLeads) return;
+  isLoadingLeads = true;
   setCrmMessage("Cargando leads...");
   try {
-    const data = await apiRequest("/rest/v1/admin_leads?select=*&order=brand.asc");
+    let data = await apiRequest("/rest/v1/admin_leads?select=*&order=brand.asc");
+    const missing = getMissingExtraLeads(data || []);
+    if (missing.length) {
+      await upsertSharedLeads(missing);
+      data = await apiRequest("/rest/v1/admin_leads?select=*&order=brand.asc");
+      missing.forEach((lead) => removeStaticLeadState(lead.id));
+    }
+
     leads = getMergedLeads(data || []);
     populateThemes();
     renderCrm();
@@ -595,14 +669,51 @@ async function loadLeads() {
     tbody.innerHTML = '<tr><td colspan="10" class="empty">Ejecuta el SQL de setup en Supabase</td></tr>';
     updateProgress();
     setCrmMessage(getSetupErrorMessage(error), true);
+  } finally {
+    isLoadingLeads = false;
   }
+}
+
+async function refreshSharedLeads() {
+  if (!activeUser || hasPendingNotesEdit() || document.hidden) return;
+
+  try {
+    const data = await apiRequest("/rest/v1/admin_leads?select=*&order=brand.asc");
+    leads = getMergedLeads(data || []);
+    populateThemes();
+    renderCrm();
+  } catch {
+    // Keep the current view during background refresh failures.
+  }
+}
+
+function startSharedRefresh() {
+  window.clearInterval(sharedRefreshTimer);
+  sharedRefreshTimer = window.setInterval(refreshSharedLeads, SHARED_REFRESH_MS);
+}
+
+function stopSharedRefresh() {
+  window.clearInterval(sharedRefreshTimer);
+  sharedRefreshTimer = 0;
 }
 
 async function updateLead(id, patch) {
   const lead = leads.find((item) => item.id === id);
   if (lead?._isStaticLead) {
-    Object.assign(lead, patch);
-    return updateStaticLead(id, patch);
+    try {
+      await upsertSharedLeads([{ ...lead, ...patch }]);
+      delete lead._isStaticLead;
+      Object.assign(lead, patch);
+      removeStaticLeadState(id);
+      setCrmMessage("Guardado en Supabase");
+      window.setTimeout(() => {
+        if (crmMessage.textContent === "Guardado en Supabase") setCrmMessage("");
+      }, 1200);
+      return true;
+    } catch {
+      Object.assign(lead, patch);
+      return updateStaticLead(id, patch);
+    }
   }
 
   try {
@@ -643,6 +754,7 @@ async function renderSession() {
   activeUser = user || null;
 
   if (!user?.email) {
+    stopSharedRefresh();
     logoutButton.classList.add("is-hidden");
     welcomeBanner.textContent = "";
     showPanel(loginPanel);
@@ -664,6 +776,7 @@ async function renderSession() {
     logoutButton.classList.remove("is-hidden");
     showPanel(adminPanel);
     await loadLeads();
+    startSharedRefresh();
   } catch (error) {
     welcomeBanner.textContent = "";
     setMessage(getSetupErrorMessage(error), true);
