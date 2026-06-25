@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>VIRAL × UK — Creative Contacts 2026</title>
+<style>
+:root {
+  --bg: #08080a;
+  --ink: #f0ede6;
+  --muted: #7a7870;
+  --dim: #3d3c38;
+  --line: #1e1e24;
+  --accent: #d8ff3e;
+  --red: #ff3e3e;
+  --blue: #3eb8ff;
+  --purple: #c97fff;
+  --gold: #ffbc3e;
+  --orange: #ff7a3e;
+  --glass: rgba(255,255,255,0.03);
+  --glass-border: rgba(255,255,255,0.07);
+  --mono: ui-monospace,"SF Mono","Menlo",monospace;
+  --sans: "Inter","Helvetica Neue",system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:13px;
+  line-height:1.6;
+  min-height:100vh;
+  padding:0 0 80px;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(ellipse 55% 40% at 90% -5%, #100a1e 0%, transparent 50%),
+    radial-gradient(ellipse 40% 45% at -5% 70%, #0a0c18 0%, transparent 50%);
+}
+
+/* HEADER */
+.header{
+  padding:52px clamp(20px,5vw,72px) 40px;
+  border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;
+}
+.eyebrow{
+  font-family:var(--mono);font-size:10px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--muted);display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.dot-live{
+  width:7px;height:7px;background:var(--accent);border-radius:50%;
+  box-shadow:0 0 10px var(--accent);animation:pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+h1{font-size:clamp(38px,7vw,82px);font-weight:800;line-height:.88;letter-spacing:-.03em;text-transform:uppercase}
+h1 em{color:var(--muted);font-style:normal}
+.tagline{margin-top:16px;font-size:12px;color:var(--muted);font-family:var(--mono);max-width:52ch;line-height:1.7}
+.header-right{text-align:right;font-family:var(--mono);font-size:10px;color:var(--dim);line-height:2}
+.header-right b{color:var(--accent)}
+
+/* FLAG STRIP */
+.flag-strip{
+  padding:12px clamp(20px,5vw,72px);
+  border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;
+  display:flex;gap:24px;flex-wrap:wrap;align-items:center;
+}
+.flag-strip span{color:var(--muted)}
+
+/* FILTERS */
+.filters{
+  padding:16px clamp(20px,5vw,72px);border-bottom:1px solid var(--line);
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+}
+.filter-btn{
+  font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;
+  border:1px solid var(--line);background:transparent;color:var(--muted);
+  padding:7px 13px;border-radius:2px;cursor:pointer;transition:all .15s;
+}
+.filter-btn:hover{border-color:var(--muted);color:var(--ink)}
+.filter-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:800}
+.filter-count{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--dim)}
+.filter-count b{color:var(--ink)}
+
+/* GRID */
+.grid{
+  padding:32px clamp(20px,5vw,72px);
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;
+}
+
+/* CARD */
+.card{
+  background:var(--glass);border:1px solid var(--glass-border);border-radius:6px;
+  padding:22px 22px 18px;display:flex;flex-direction:column;gap:14px;
+  position:relative;overflow:hidden;transition:border-color .2s,transform .15s;
+}
+.card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.02) 0%,transparent 60%);
+  pointer-events:none;
+}
+.card:hover{border-color:rgba(255,255,255,.13);transform:translateY(-1px)}
+.card[data-hidden="true"]{display:none}
+
+/* CARD TOP */
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.card-meta{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.card-type{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;font-weight:700;display:inline-block;width:fit-content;
+}
+.type-studio   {background:rgba(62,184,255,.1);color:var(--blue);border:1px solid rgba(62,184,255,.2)}
+.type-director {background:rgba(201,127,255,.1);color:var(--purple);border:1px solid rgba(201,127,255,.2)}
+.type-artist   {background:rgba(216,255,62,.08);color:var(--accent);border:1px solid rgba(216,255,62,.18)}
+.type-cd       {background:rgba(255,188,62,.1);color:var(--gold);border:1px solid rgba(255,188,62,.2)}
+.type-postpro  {background:rgba(255,62,62,.1);color:var(--red);border:1px solid rgba(255,62,62,.2)}
+.type-mixed    {background:rgba(255,122,62,.1);color:var(--orange);border:1px solid rgba(255,122,62,.2)}
+
+.card-name{font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-handle{font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.card-handle a{color:inherit;text-decoration:none;transition:color .12s}
+.card-handle a:hover{color:var(--ink)}
+.card-score{font-family:var(--mono);font-size:26px;font-weight:900;color:var(--accent);line-height:1;flex-shrink:0;text-align:right}
+.card-score span{display:block;font-size:8px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;font-weight:400}
+
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--line);border-radius:2px;color:var(--muted)}
+
+.card-desc{font-size:12px;color:rgba(240,237,230,.6);line-height:1.65}
+.card-clients{font-family:var(--mono);font-size:10px;color:var(--dim);line-height:1.6}
+.card-clients b{color:rgba(240,237,230,.45);font-weight:600}
+
+.card-contact{
+  margin-top:auto;padding-top:14px;border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px;
+}
+.contact-info{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.7}
+.contact-info a{color:var(--accent);text-decoration:none}
+.contact-info a:hover{text-decoration:underline}
+.contact-flag{font-size:16px;flex-shrink:0}
+
+.card-angle{
+  background:rgba(216,255,62,.04);border:1px solid rgba(216,255,62,.1);border-radius:3px;
+  padding:9px 12px;font-size:11px;color:rgba(216,255,62,.7);line-height:1.55;font-style:italic;
+}
+
+.card-footer{display:flex;align-items:center;gap:8px;margin-top:4px}
+.status-select{
+  font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;
+  border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);
+  padding:5px 8px;border-radius:2px;cursor:pointer;outline:none;flex:1;
+}
+.note-input{
+  font-family:var(--mono);font-size:10px;border:1px solid var(--line);
+  background:rgba(255,255,255,.02);color:var(--ink);padding:5px 8px;
+  border-radius:2px;flex:2;outline:none;min-width:0;
+}
+.note-input::placeholder{color:var(--dim)}
+
+footer{
+  padding:0 clamp(20px,5vw,72px);margin-top:40px;border-top:1px solid var(--line);
+  padding-top:16px;font-family:var(--mono);font-size:10px;color:var(--dim);line-height:2;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="eyebrow"><span class="dot-live"></span> VIRAL — DUQUE CALOPA</div>
+    <h1>UK<br><em>Creatives</em></h1>
+    <p class="tagline">Casas de post-pro · Directores creativos · Estudios VFX/CGI<br>Conectados con moda, música y cultura visual · London 2026</p>
+  </div>
+  <div class="header-right">Jun 2026<br><b>14</b> contactos<br>UK / London</div>
+</div>
+
+<div class="flag-strip">
+  🇬🇧 <span>Soho · East London · North London · Bristol</span>
+  ·· Hub global de VFX ·· Soho = Framestore, ETC, DNEG ·· East London = independientes y MVs ·· Bristol = animación
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" data-filter="all">Todos</button>
+  <button class="filter-btn" data-filter="postpro">Post-Pro</button>
+  <button class="filter-btn" data-filter="director">Directores</button>
+  <button class="filter-btn" data-filter="studio">Estudios VFX</button>
+  <button class="filter-btn" data-filter="mixed">Mixto / AI</button>
+  <button class="filter-btn" data-filter="cd">Dirección Creativa</button>
+  <button class="filter-btn" data-filter="artist">Artistas</button>
+  <span class="filter-count">Mostrando <b id="visible-count">14</b> de 14</span>
+</div>
+
+<div class="grid" id="grid">
+
+  <!-- 1. ELECTRIC THEATRE COLLECTIVE -->
+  <div class="card" data-cat="studio">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-studio">VFX / Design / Colour</span>
+        <div class="card-name">Electric Theatre Collective</div>
+        <div class="card-handle"><a href="https://instagram.com/electric_theatre_collective" target="_blank">@electric_theatre_collective</a></div>
+      </div>
+      <div class="card-score">91<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">VFX</span><span class="tag">CGI</span><span class="tag">Colour</span><span class="tag">MV</span><span class="tag">D&AD Black</span>
+    </div>
+    <p class="card-desc">Uno de los mejores estudios de VFX y motion design del mundo, basado en Soho London desde 2011. D&AD Black Pencil, cuatro VES Honours, múltiples Company of the Year. Filiales Electric Colour y Electric Creative Studio. Portfolio: Coca-Cola Masterpiece, Carlsberg, Philips, Samsung, DAZN. 24K en IG.</p>
+    <div class="card-clients"><b>Clientes:</b> Coca-Cola · Samsung · DAZN · Carlsberg · Accenture · Philips · Apple</div>
+    <div class="card-angle">Referente absoluto UK en VFX creativo. Posible socio para overflow de compositing y grade en proyectos premium de moda o música.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="mailto:info@electrictheatre.tv">info@electrictheatre.tv</a><br>
+        +44 20 7636 5317 · Soho, London · <a href="https://electrictheatre.tv" target="_blank">electrictheatre.tv</a>
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 3. ANALOG STUDIO -->
+  <div class="card" data-cat="studio">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-studio">VFX / Realtime / Design</span>
+        <div class="card-name">Analog Studio</div>
+        <div class="card-handle"><a href="https://instagram.com/analog_studio" target="_blank">@analog_studio</a></div>
+      </div>
+      <div class="card-score">87<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">VFX</span><span class="tag">Realtime</span><span class="tag">Animation</span><span class="tag">Fashion</span><span class="tag">Indie</span>
+    </div>
+    <p class="card-desc">Estudio independiente de VFX, diseño y animación basado en London. Award-winning, colaborativo e innovador. Portfolio: Apple, <b>Balenciaga</b>, Microsoft. Foco en comerciales y real-time experiences. 16K en IG. Perfil más boutique y accesible que los gigantes del Soho.</p>
+    <div class="card-clients"><b>Clientes:</b> Apple · Balenciaga · Microsoft · comerciales premium</div>
+    <div class="card-angle">Trabajan con Balenciaga — fit directo con moda. Socio ideal para CGI de prenda, branded content fashion o co-producción en proyectos de lujo.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        Via web: <a href="https://analogstudio.co.uk/contact" target="_blank">analogstudio.co.uk/contact</a><br>
+        1 Rosoman Place, London · <a href="https://analogstudio.co.uk" target="_blank">analogstudio.co.uk</a>
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 4. RED KNUCKLES -->
+  <div class="card" data-cat="studio">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-studio">Animation / VFX Studio</span>
+        <div class="card-name">Red Knuckles</div>
+        <div class="card-handle"><a href="https://instagram.com/redknucklesstudio" target="_blank">@redknucklesstudio</a></div>
+      </div>
+      <div class="card-score">83<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Emmy + BAFTA</span><span class="tag">2D/3D</span><span class="tag">MV</span><span class="tag">East London</span>
+    </div>
+    <p class="card-desc">Estudio de animación y VFX Emmy + BAFTA ganador, East London. Fundado por <b>Rick</b> y <b>Mario</b> en 2014. 40+ seats in-house. Pipeline full desde concept hasta delivery. Portfolio: Ubisoft, Greenpeace, publicidad, MVs, series. 8.5K en IG. Filosofía "artists first".</p>
+    <div class="card-clients"><b>Clientes:</b> Ubisoft · Greenpeace · publicidad · music videos · TV series</div>
+    <div class="card-angle">Studio boutique con mentalidad de artista. Colaboración en MVs o publicidad con componentes de animación/VFX — posible pipeline compartido.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        Via web: <a href="https://redknuckles.co.uk/contact" target="_blank">redknuckles.co.uk/contact</a><br>
+        East London · Oficinas en UK, Portugal y Brasil
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 5. KODE -->
+  <div class="card" data-cat="director">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-director">Production Studio / Directors</span>
+        <div class="card-name">KODE</div>
+        <div class="card-handle"><a href="https://instagram.com/kodemedia" target="_blank">@kodemedia</a></div>
+      </div>
+      <div class="card-score">88<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Comerciales</span><span class="tag">MV</span><span class="tag">Inmersivo</span><span class="tag">British Arrows</span>
+    </div>
+    <p class="card-desc">Casa de producción y directores London. Co-fundada por <b>Jack Goodwin</b> (EP). Roster de directores top: Stefan Hunt, Harv Frost, Otis Dominique, Peter Franklyn Banks, Jodeb. Trabajan en comerciales, MVs, branded content e inmersivos. British Arrows, YDA, D&AD. 18K en IG.</p>
+    <div class="card-clients"><b>Clientes:</b> ASICS · Adidas · Skrillex · Jack White · TUI · Samsung · Valspar</div>
+    <div class="card-angle">Productora con directores VFX-heavy. VFX/CGI como servicio para sus producciones de moda y música — Jodeb (Adidas/Fortnite/Skrillex) es el contacto más relevante.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        Jack Goodwin (EP/Co-founder)<br>
+        <a href="https://kodemedia.com" target="_blank">kodemedia.com</a> · <a href="https://instagram.com/kodemedia" target="_blank">@kodemedia</a>
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 6. FRAMESTORE -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">VFX / Post-Pro / Global</span>
+        <div class="card-name">Framestore</div>
+        <div class="card-handle"><a href="https://instagram.com/framestoredesignstudio" target="_blank">@framestoredesignstudio</a></div>
+      </div>
+      <div class="card-score">86<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Oscar VFX</span><span class="tag">CGI</span><span class="tag">MV</span><span class="tag">Motion Design</span><span class="tag">London/NYC/LA</span>
+    </div>
+    <p class="card-desc">Empresa de VFX ganadora de Oscar y referente mundial, HQ en London. Rama de Design Studio (@framestoredesignstudio): Motion Design · Animation · Art Direction. Portfolio: Gravity, Guardians, Paddington, His Dark Materials, Loki. Clientes: BMW, Samsung, Apple TV, Burger King.</p>
+    <div class="card-clients"><b>Clientes:</b> Apple TV · BMW · Samsung · EA Sports · Renault · Burger King</div>
+    <div class="card-angle">El gigante — escala grande pero con división de design accesible. Contacto relevante para proyectos de moda con presupuesto o referencia del mercado UK.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://framestore.com" target="_blank">framestore.com</a><br>
+        London, NYC, LA, Chicago, Mumbai · Contact via web
+      </div>
+      <span class="contact-flag">🇬🇧🌍</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 7. STUDIO B (VFX/viral) -->
+  <div class="card" data-cat="mixed">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-mixed">Branded / VFX / Viral</span>
+        <div class="card-name">Studio B</div>
+        <div class="card-handle"><a href="https://studiob.net" target="_blank">studiob.net</a></div>
+      </div>
+      <div class="card-score">79<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Viral Content</span><span class="tag">VFX</span><span class="tag">Social</span><span class="tag">North London</span><span class="tag">50M+ views</span>
+    </div>
+    <p class="card-desc">Estudio creativo independiente North London focalizado en branded entertainment, VFX, strategy y distribución. Especialidad: contenido viral con CGI integrado para marcas. Portfolio: Marks & Spencer, Costa Coffee, Adobe, O2. 50M+ views/mes para clientes. In-house: ideación, VFX, sound, posting.</p>
+    <div class="card-clients"><b>Clientes:</b> M&S · Costa Coffee · Adobe · O2 · Borderlands 4</div>
+    <div class="card-angle">Estudio con mentalidad viral + VFX. Fit perfecto para branded content de moda con CGI. Posible co-producción o overflow de VFX para sus campañas.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://studiob.net" target="_blank">studiob.net</a><br>
+        North London · contacto via web
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 8. BLUEBOLT -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">VFX / Post-Pro</span>
+        <div class="card-name">BlueBolt VFX</div>
+        <div class="card-handle"><a href="https://blue-bolt.com" target="_blank">blue-bolt.com</a></div>
+      </div>
+      <div class="card-score">80<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">VFX</span><span class="tag">Film/TV</span><span class="tag">Compositing</span><span class="tag">CGI</span><span class="tag">Indie</span>
+    </div>
+    <p class="card-desc">Estudio independiente de VFX fundado en 2009, central London. Especializados en compositing, CGI y digital matte painting para film y TV global. Boutique independiente con reputación sólida. Trabajo para Hollywood studios y producciones UK de alto presupuesto.</p>
+    <div class="card-clients"><b>Sector:</b> Film · TV · streaming · Hollywood co-productions</div>
+    <div class="card-angle">VFX boutique accesible para proyectos que necesiten compositing premium y CGI de nivel film. Posible socio de overflow.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://blue-bolt.com" target="_blank">blue-bolt.com</a><br>
+        Central London · contacto via web
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 9. THE MILL -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">VFX / CGI / Post Global</span>
+        <div class="card-name">The Mill</div>
+        <div class="card-handle">themill.com</div>
+      </div>
+      <div class="card-score">84<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Oscar/Cannes/D&AD</span><span class="tag">CGI</span><span class="tag">Colour</span><span class="tag">London→Seoul</span>
+    </div>
+    <p class="card-desc">Fundado en 1990 como la primera casa digital de VFX de Europa. Ahora global: London, Paris, <b>Seoul</b>, NY, Shanghai, Sydney. Portfolio: Apple TV, BMW, Samsung, Burger King, EA Sports, Renault. Gold estándar en CGI para comerciales. Relevante también para el mercado Korea.</p>
+    <div class="card-clients"><b>Clientes:</b> Apple TV · BMW · Samsung · EA Sports · Renault · Burger King · Nissan</div>
+    <div class="card-angle">Tienen oficina en Seoul + London — punto de conexión entre ambos mercados. VFX para proyectos de moda con presupuesto international.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://themill.com" target="_blank">themill.com</a><br>
+        London · Seoul · NY · Paris · contacto via web
+      </div>
+      <span class="contact-flag">🇬🇧🇰🇷🌍</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 10. MOLINARE -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">Post-Pro / Colour / Sound</span>
+        <div class="card-name">Molinare</div>
+        <div class="card-handle">molinare.co.uk</div>
+      </div>
+      <div class="card-score">76<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Colour Grading</span><span class="tag">Sound</span><span class="tag">VFX</span><span class="tag">Est. 1970s</span>
+    </div>
+    <p class="card-desc">Una de las post-pro más históricas de London (est. 1970s). Editing, colour grading, audio mixing y VFX. TV dramas, documentales y feature films. Referente en el sector UK. Stuart Tingini (@dr_dreps) es su Creative Director — perfil IG activo, stylist y fotógrafo además de CD.</p>
+    <div class="card-clients"><b>Sector:</b> TV drama · documentales · feature films · UK broadcast</div>
+    <div class="card-angle">Contacto directo vía Stuart Tingini (CD) — perfil accesible en IG. Post-pro para proyectos de moda que necesiten colour grade profesional en London.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        Stuart Tingini (CD): <a href="https://instagram.com/dr_dreps" target="_blank">@dr_dreps</a><br>
+        <a href="https://molinare.co.uk" target="_blank">molinare.co.uk</a> · London
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 11. BUFF MOTION -->
+  <div class="card" data-cat="studio">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-studio">Motion Design Studio</span>
+        <div class="card-name">Buff Motion</div>
+        <div class="card-handle">buffmotion.com</div>
+      </div>
+      <div class="card-score">81<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Motion Design</span><span class="tag">Broadcast</span><span class="tag">Branding</span><span class="tag">UK</span>
+    </div>
+    <p class="card-desc">Estudio de motion design UK de referencia. Emplean a Myungeun Kim (@myung_motion), motion designer coreano — el nexo directo con el ecosistema Seoul. Especializados en motion design de alta calidad para broadcast, branding y branded content.</p>
+    <div class="card-clients"><b>Sector:</b> Broadcast · branding · branded content · title sequences</div>
+    <div class="card-angle">Puente entre UK y Korea vía Myungeun Kim. Motion design para proyectos de moda, títulos animados y brand identity en movimiento.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://buffmotion.com" target="_blank">buffmotion.com</a><br>
+        UK · Myungeun Kim: <a href="https://instagram.com/myung_motion" target="_blank">@myung_motion</a>
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 12. BLACK TRIANGLE FILMS -->
+  <div class="card" data-cat="director">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-director">MV Production</span>
+        <div class="card-name">Black Triangle Films</div>
+        <div class="card-handle">blacktrianglefilms.com</div>
+      </div>
+      <div class="card-score">74<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Music Video</span><span class="tag">London</span><span class="tag">Indie</span><span class="tag">End-to-End</span>
+    </div>
+    <p class="card-desc">Casa de producción indie London especializada en music videos. "Made by artists for artists." Equipo pequeño y apasionado de directores, productores y editores. Servicio end-to-end para músicos. Perfil boutique — accesibles y con mentalidad creativa directa.</p>
+    <div class="card-clients"><b>Sector:</b> Music videos independientes · artistas UK · indie/alternative</div>
+    <div class="card-angle">MV house indie — entrada directa al mercado musical UK. VFX/CGI como add-on para sus producciones de videoclip.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://blacktrianglefilms.com" target="_blank">blacktrianglefilms.com</a><br>
+        London · contacto via web
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 13. QUITE BRILLIANT (Virtual Production) -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">Virtual Production / LED</span>
+        <div class="card-name">Quite Brilliant</div>
+        <div class="card-handle">quitebrilliant.co.uk</div>
+      </div>
+      <div class="card-score">77<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">LED Volume</span><span class="tag">VP</span><span class="tag">Unreal Engine</span><span class="tag">AI</span><span class="tag">London</span>
+    </div>
+    <p class="card-desc">Único LED Volume fijo UK con MicroLED Samsung de 24m. Estudio de 5.500 sq ft con espacio adicional de 2.000 sq ft. Tecnología: Unreal Engine, Chaos Arena LiDAR, AI + VFX tradicional. 30+ años en producción/post/VFX. Referente en virtual production UK.</p>
+    <div class="card-clients"><b>Sector:</b> Marcas globales · publicidad · fashion campaigns · virtual production</div>
+    <div class="card-angle">Virtual production para campañas de moda con mundos CGI in-camera. Tecnología de vanguardia que permite producir en London con resultados de cine.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://quitebrilliant.co.uk" target="_blank">quitebrilliant.co.uk</a><br>
+        London · contacto via web
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 14. WEARESEVENTEEN -->
+  <div class="card" data-cat="cd">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-cd">Motion / Design Studio</span>
+        <div class="card-name">We Are Seventeen</div>
+        <div class="card-handle">weareseventeen.com</div>
+      </div>
+      <div class="card-score">78<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Motion Design</span><span class="tag">Fashion</span><span class="tag">Tissot</span><span class="tag">Broadcast</span>
+    </div>
+    <p class="card-desc">Estudio de motion design London con trabajo reconocido en motiongraphics.london. Portfolio: Tissot (Swiss watch brand) — combinan motion graphics, collage, infografías y diseño fashion. Trabajo de alta calidad visual y diseño sofisticado para marcas premium y broadcast.</p>
+    <div class="card-clients"><b>Clientes:</b> Tissot · marcas premium · broadcast · branded content</div>
+    <div class="card-angle">Motion design de moda — fit directo con el estilo visual de VIRAL. Posible colaboración en proyectos de identidad en movimiento para marcas fashion.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://weareseventeen.com" target="_blank">weareseventeen.com</a><br>
+        London · contacto via web
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 15. LOLA POST PRODUCTION -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">VFX / CGI / Post Boutique</span>
+        <div class="card-name">Lola Post Production</div>
+        <div class="card-handle">lolapost.com</div>
+      </div>
+      <div class="card-score">75<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">CGI Fotorrealista</span><span class="tag">Advertising</span><span class="tag">Film</span><span class="tag">Soho</span>
+    </div>
+    <p class="card-desc">VFX boutique North Soho especializado en CGI fotorrealista integrado en live action para publicidad, broadcast y film. "Boutique flexibility + bespoke VFX solutions". Servicios: CGI, compositing, previs, matte painting, title design, VFX supervision on-location.</p>
+    <div class="card-clients"><b>Sector:</b> Advertising · broadcast TV · feature film · branded content</div>
+    <div class="card-angle">Boutique VFX en Soho con enfoque en CGI foto-realista — ideal para proyectos de moda donde la integración perfecta con live action es clave.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://lolapost.com" target="_blank">lolapost.com</a><br>
+        North Soho, London · contacto via web
+      </div>
+      <span class="contact-flag">🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <b>Fuentes:</b> Web corporativa · Instagram público · LinkedIn · UK Screen Alliance · APA · LBBOnline · motiongraphics.london. Datos verificados jun 2026. VIRAL — Duque Calopa.
+</footer>
+
+<script>
+const btns = document.querySelectorAll('.filter-btn');
+const cards = document.querySelectorAll('.card');
+const countEl = document.getElementById('visible-count');
+
+btns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    btns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    let visible = 0;
+    cards.forEach(card => {
+      const match = filter === 'all' || card.dataset.cat === filter;
+      card.dataset.hidden = match ? 'false' : 'true';
+      if(match) visible++;
+    });
+    countEl.textContent = visible;
+  });
+});
+
+const LS = 'viral_uk_contacts_2026';
+let state = JSON.parse(localStorage.getItem(LS) || '{}');
+cards.forEach((card, i) => {
+  const id = 'card_' + i;
+  const sel = card.querySelector('.status-select');
+  const inp = card.querySelector('.note-input');
+  if(state[id]){
+    if(state[id].status) sel.value = state[id].status;
+    if(state[id].note) inp.value = state[id].note;
+  }
+  sel.addEventListener('change', () => {
+    state[id] = state[id] || {};
+    state[id].status = sel.value;
+    localStorage.setItem(LS, JSON.stringify(state));
+  });
+  inp.addEventListener('input', () => {
+    state[id] = state[id] || {};
+    state[id].note = inp.value;
+    localStorage.setItem(LS, JSON.stringify(state));
+  });
+});
+</script>
+</body>
+</html>

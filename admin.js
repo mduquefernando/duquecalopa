@@ -34,6 +34,10 @@ const SESSION_KEY = "viral_admin_session_v2";
 const LEGACY_SESSION_KEYS = ["viral_admin_session"];
 const STATIC_LEAD_STATE_KEY = "viral_admin_static_leads_v1";
 const SHARED_REFRESH_MS = 15000;
+const CRM_IMPORT_SOURCES = [
+  { url: "korea-contacts-jun2026.html", country: "KR", origin: "Korea creative contacts jun 2026" },
+  { url: "uk-contacts-jun2026.html", country: "UK", origin: "UK creative contacts jun 2026" }
+];
 const EXTRA_LEADS = [
   { id: "advisry", cat: "Marca", brand: "ADVISRY", handle: "advisry", theme: "Fashion autoral / cine", contact_person: "Keith Herron", contact_instagrams: [{ handle: "yungrooftop" }], followers: 38000, followers_label: "38K / 22K", followers_sub: "personal / marca 22K", country: "US", via: "DM personal", is_email: false, is_hot: false },
   { id: "ciriaco", cat: "Marca", brand: "CIRIACO", handle: "madebyciriaco", theme: "Accesorios futuristas", contact_person: "Ashley Ciriaco", contact_instagrams: [{ handle: "ocairicyelhsa" }], followers: 70000, followers_label: "70K / 18K", followers_sub: "personal / marca 18K", country: "US", via: "DM personal", is_email: false, is_hot: true },
@@ -87,6 +91,7 @@ const EXTRA_LEADS = [
 ];
 
 let leads = [];
+let crmImportSourcesLoaded = false;
 let activeUser = null;
 let activeAdminRecord = null;
 let authDebug = false;
@@ -507,6 +512,115 @@ async function signOut() {
   showPanel(loginPanel);
 }
 
+function decodeHtml(value) {
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = value || "";
+  return textarea.value;
+}
+
+function textFromHtml(value) {
+  return decodeHtml(String(value || "").replace(/<[^>]+>/g, " "))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+
+function getUniqueValues(values) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
+function slugifyLeadId(value) {
+  return String(value || "lead")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "")
+    .slice(0, 36) || "lead";
+}
+
+function getImportedLeadHandle(card, handleText) {
+  if (handleText.startsWith("@")) return handleText.slice(1);
+
+  const handleLink = card.querySelector(".card-handle a")?.href || "";
+  if (handleLink.includes("instagram.com/")) {
+    return handleLink.split("instagram.com/")[1].split(/[?#/]/)[0];
+  }
+
+  return handleText;
+}
+
+function parseImportedLeadCard(card, source) {
+  const brand = textFromHtml(card.querySelector(".card-name")?.innerHTML);
+  const handleText = textFromHtml(card.querySelector(".card-handle")?.innerHTML);
+  const handle = getImportedLeadHandle(card, handleText);
+  const type = textFromHtml(card.querySelector(".card-type")?.innerHTML);
+  const score = Number(textFromHtml(card.querySelector(".card-score")?.childNodes[0]?.textContent));
+  const tags = getUniqueValues(Array.from(card.querySelectorAll(".tag")).map((tag) => textFromHtml(tag.innerHTML)));
+  const description = textFromHtml(card.querySelector(".card-desc")?.innerHTML);
+  const clients = textFromHtml(card.querySelector(".card-clients")?.innerHTML);
+  const angle = textFromHtml(card.querySelector(".card-angle")?.innerHTML);
+  const contactHtml = card.querySelector(".contact-info")?.innerHTML || "";
+  const contactText = textFromHtml(contactHtml);
+  const emails = getUniqueValues(Array.from(contactHtml.matchAll(/mailto:([^"?]+)/g)).map((match) => decodeHtml(match[1])));
+  const instagrams = getUniqueValues(Array.from(contactHtml.matchAll(/instagram\.com\/([^"?#/]+)/g)).map((match) => decodeHtml(match[1])));
+  const via = getUniqueValues([...emails, ...instagrams.map((item) => `@${item}`)]).join(" / ") || contactText || handle || "n/d";
+  const contactPerson = contactText
+    .replace(emails.join(" "), "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 120) || brand;
+  const notes = [
+    `Origen ${source.origin}.`,
+    `Score ${Number.isFinite(score) ? score : "n/d"}.`,
+    clients ? `${clients}.` : "",
+    description,
+    angle ? `Angulo: ${angle}` : ""
+  ].filter(Boolean).join(" ");
+
+  return {
+    id: `${source.country.toLowerCase()}-${slugifyLeadId(brand || handle)}`,
+    cat: "Estudio",
+    brand,
+    handle,
+    theme: getUniqueValues([type, ...tags]).join(" / ") || source.origin,
+    contact_person: contactPerson,
+    contact_instagrams: instagrams.map((item) => ({ handle: item })),
+    followers: null,
+    followers_label: "n/d",
+    followers_sub: type || null,
+    country: source.country,
+    via,
+    is_email: emails.length > 0,
+    is_hot: Number.isFinite(score) && score >= 85,
+    notes
+  };
+}
+
+async function loadCrmImportSources() {
+  if (crmImportSourcesLoaded) return;
+  const importedLeads = [];
+
+  for (const source of CRM_IMPORT_SOURCES) {
+    const response = await fetch(source.url, { cache: "no-store" });
+    if (!response.ok) throw new Error(`No se pudo cargar ${source.url}`);
+
+    const html = await response.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    doc.querySelectorAll(".card").forEach((card) => {
+      const lead = parseImportedLeadCard(card, source);
+      if (lead.brand) importedLeads.push(lead);
+    });
+  }
+
+  const existingIds = new Set(EXTRA_LEADS.map((lead) => lead.id));
+  importedLeads.forEach((lead) => {
+    if (!existingIds.has(lead.id)) {
+      EXTRA_LEADS.push(lead);
+      existingIds.add(lead.id);
+    }
+  });
+  crmImportSourcesLoaded = true;
+}
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -672,6 +786,7 @@ async function loadLeads() {
   isLoadingLeads = true;
   setCrmMessage("Cargando leads...");
   try {
+    await loadCrmImportSources();
     let data = await apiRequest("/rest/v1/admin_leads?select=*&order=brand.asc");
     const missing = getMissingExtraLeads(data || []);
     if (missing.length) {

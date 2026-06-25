@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>VIRAL × KOREA — Creative Contacts 2026</title>
+<style>
+:root {
+  --bg: #080809;
+  --ink: #f0ede6;
+  --muted: #7a7870;
+  --dim: #3d3c38;
+  --line: #1e1e22;
+  --accent: #d8ff3e;
+  --accent2: #2a3a10;
+  --red: #ff3e3e;
+  --blue: #3eb8ff;
+  --purple: #c97fff;
+  --gold: #ffbc3e;
+  --glass: rgba(255,255,255,0.032);
+  --glass-border: rgba(255,255,255,0.07);
+  --mono: ui-monospace,"SF Mono","Menlo",monospace;
+  --sans: "Inter","Helvetica Neue",system-ui,sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 0 0 80px;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 80% -10%, #0e1a06 0%, transparent 55%),
+    radial-gradient(ellipse 40% 50% at -10% 60%, #0a0a18 0%, transparent 50%);
+}
+
+/* HEADER */
+.header {
+  padding: 52px clamp(20px,5vw,72px) 40px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+}
+.header-left {}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.dot-live {
+  width: 7px; height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:.5; transform:scale(.7); }
+}
+h1 {
+  font-size: clamp(38px,7vw,82px);
+  font-weight: 800;
+  line-height: .88;
+  letter-spacing: -.03em;
+  text-transform: uppercase;
+}
+h1 em { color: var(--muted); font-style: normal; }
+.tagline {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--mono);
+  max-width: 52ch;
+  line-height: 1.7;
+}
+.header-right {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+  line-height: 2;
+}
+.header-right b { color: var(--accent); }
+
+/* FILTER BAR */
+.filters {
+  padding: 16px clamp(20px,5vw,72px);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filter-btn {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  padding: 7px 13px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.filter-btn:hover { border-color: var(--muted); color: var(--ink); }
+.filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 800; }
+.filter-count {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+}
+.filter-count b { color: var(--ink); }
+
+/* GRID */
+.grid {
+  padding: 32px clamp(20px,5vw,72px);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px,1fr));
+  gap: 16px;
+}
+
+/* CARD */
+.card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 6px;
+  padding: 22px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s, transform .15s;
+  cursor: default;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.025) 0%, transparent 60%);
+  pointer-events: none;
+}
+.card:hover {
+  border-color: rgba(255,255,255,.14);
+  transform: translateY(-1px);
+}
+.card[data-hidden="true"] { display: none; }
+
+/* CARD TOP */
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+.card-type {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 2px;
+  font-weight: 700;
+  display: inline-block;
+  width: fit-content;
+}
+.type-studio    { background: rgba(62,184,255,.12); color: var(--blue); border: 1px solid rgba(62,184,255,.2); }
+.type-director  { background: rgba(201,127,255,.12); color: var(--purple); border: 1px solid rgba(201,127,255,.2); }
+.type-artist    { background: rgba(216,255,62,.1); color: var(--accent); border: 1px solid rgba(216,255,62,.2); }
+.type-cd        { background: rgba(255,188,62,.1); color: var(--gold); border: 1px solid rgba(255,188,62,.2); }
+.type-postpro   { background: rgba(255,62,62,.1); color: var(--red); border: 1px solid rgba(255,62,62,.2); }
+
+.card-name {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-handle {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.card-handle a {
+  color: inherit;
+  text-decoration: none;
+  transition: color .12s;
+}
+.card-handle a:hover { color: var(--ink); }
+
+.card-score {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1;
+  flex-shrink: 0;
+  text-align: right;
+}
+.card-score span {
+  display: block;
+  font-size: 8px;
+  color: var(--dim);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-top: 3px;
+  font-weight: 400;
+}
+
+/* TAGS ROW */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--muted);
+}
+
+/* DESCRIPTION */
+.card-desc {
+  font-size: 12px;
+  color: rgba(240,237,230,.6);
+  line-height: 1.65;
+}
+
+/* CLIENTS / WORKS */
+.card-clients {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+  line-height: 1.6;
+}
+.card-clients b { color: rgba(240,237,230,.45); font-weight: 600; }
+
+/* CONTACT ROW */
+.card-contact {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+}
+.contact-info {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.contact-info a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.contact-info a:hover { text-decoration: underline; }
+.contact-flag {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* ANGLE */
+.card-angle {
+  background: rgba(216,255,62,.04);
+  border: 1px solid rgba(216,255,62,.1);
+  border-radius: 3px;
+  padding: 9px 12px;
+  font-size: 11px;
+  color: rgba(216,255,62,.7);
+  line-height: 1.55;
+  font-style: italic;
+}
+
+/* STATUS SELECT */
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.status-select {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  color: var(--muted);
+  padding: 5px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  flex: 1;
+}
+.note-input {
+  font-family: var(--mono);
+  font-size: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.02);
+  color: var(--ink);
+  padding: 5px 8px;
+  border-radius: 2px;
+  flex: 2;
+  outline: none;
+  min-width: 0;
+}
+.note-input::placeholder { color: var(--dim); }
+
+/* FOOTER */
+footer {
+  padding: 0 clamp(20px,5vw,72px);
+  margin-top: 40px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+  line-height: 2;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="eyebrow"><span class="dot-live"></span> VIRAL — DUQUE CALOPA</div>
+    <h1>Korea<br><em>Creatives</em></h1>
+    <p class="tagline">Casas de postproducción · Directores creativos · Artistas VFX/CGI<br>Conectados con moda, música y cultura visual · Seúl 2026</p>
+  </div>
+  <div class="header-right">
+    Jun 2026<br><b>15</b> contactos<br>KR / Seoul
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" data-filter="all">Todos</button>
+  <button class="filter-btn" data-filter="postpro">Post-Pro</button>
+  <button class="filter-btn" data-filter="director">Directores MV</button>
+  <button class="filter-btn" data-filter="studio">Estudios VFX</button>
+  <button class="filter-btn" data-filter="cd">Directores Creativos</button>
+  <button class="filter-btn" data-filter="artist">Artistas / CGI</button>
+  <span class="filter-count">Mostrando <b id="visible-count">15</b> de 15</span>
+</div>
+
+<div class="grid" id="grid">
+
+  <!-- 1. RIGEND FILM -->
+  <div class="card" data-cat="director">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-director">Director MV</span>
+        <div class="card-name">Rigend Film</div>
+        <div class="card-handle"><a href="https://instagram.com/rigend.film" target="_blank">@rigend.film</a></div>
+      </div>
+      <div class="card-score">92<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Kpop MV</span><span class="tag">Fashion</span><span class="tag">CGI</span><span class="tag">Seoul</span>
+    </div>
+    <p class="card-desc">La casa de producción de MVs más relevante de Corea. Fundada por <b>Jang Dongju (DJ)</b> y <b>Rima Yoon</b> en 2016. Portfolio: TWICE, SEVENTEEN, NCT 127, IVE, (G)I-DLE, BoyNextDoor, LE SSERAFIM. Foco en visual narrative y cinematografía de alta escala. Subcontratan VFX/3D a BLEUNOIA, DDIP Studio y Studio Moonshot.</p>
+    <div class="card-clients"><b>Clientes:</b> TWICE · SEVENTEEN · NCT 127 · IVE · aespa · LE SSERAFIM · (G)I-DLE</div>
+    <div class="card-angle">VFX/CGI para sus MVs. Ya subcontratan 3D — propuesta directa a DJ o Rima para producción de efectos en moda y branded content.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="mailto:rigend.film@gmail.com">rigend.film@gmail.com</a><br>
+        Creative team: <a href="https://instagram.com/ri9.ri9.ri9" target="_blank">@ri9.ri9.ri9</a>
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 2. GIANTSTEP -->
+  <div class="card" data-cat="studio">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-studio">Estudio VFX / Tech</span>
+        <div class="card-name">GIANTSTEP</div>
+        <div class="card-handle"><a href="https://instagram.com/giantstepstudios" target="_blank">@giantstepstudios</a></div>
+      </div>
+      <div class="card-score">89<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">VFX</span><span class="tag">AI Visual</span><span class="tag">Fashion</span><span class="tag">XR</span><span class="tag">Virtual Human</span>
+    </div>
+    <p class="card-desc">Creative tech studio fundado en 2008. Referente en VFX, motion graphics, XR y virtual humans para marcas globales, entertainment y TV. Cotizan en KOSDAQ. Trabajan con Samsung, NewJeans, NARS, Hyundai. Portfolio Behance con trabajo para Samsung One UI 7 y proyectos de media art.</p>
+    <div class="card-clients"><b>Clientes:</b> Samsung · NewJeans · NARS · Hyundai · Lotte · entertainment TV</div>
+    <div class="card-angle">Estudio hermano potencial. Overflow de proyectos de moda internacional, co-producción o pipeline compartido de CGI/compositing.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="mailto:info@giantstep.co.kr">info@giantstep.co.kr</a><br>
+        Gangnam-gu, Seoul · <a href="https://giantstep.co.kr" target="_blank">giantstep.co.kr</a>
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 3. DEXTER STUDIOS -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">Post-Pro / VFX</span>
+        <div class="card-name">Dexter Studios</div>
+        <div class="card-handle"><a href="https://instagram.com/dexterstudios.official" target="_blank">@dexterstudios.official</a></div>
+      </div>
+      <div class="card-score">85<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">VFX Feature</span><span class="tag">Netflix</span><span class="tag">Streaming</span><span class="tag">Creature</span>
+    </div>
+    <p class="card-desc">Referente en VFX de alto presupuesto para streaming y cine. Fundado en 2012 por el director Kim Young-hwa. Portfolio: Netflix Originals, series de plataformas globales. Cotizan en bolsa. Infraestructura de VFX de nivel Hollywood en Seoul.</p>
+    <div class="card-clients"><b>Clientes:</b> Netflix · streaming platforms · feature film · Korean cinema</div>
+    <div class="card-angle">Contacto de nivel estudio — viable para co-producción en proyectos de moda con presupuesto o como referencia del mercado coreano.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="mailto:dexterstudios@dexterstudios.com">dexterstudios@dexterstudios.com</a><br>
+        Mapo-gu, Seoul · <a href="https://dexterstudios.com" target="_blank">dexterstudios.com</a>
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 4. STUDIO MOONSHOT -->
+  <div class="card" data-cat="studio">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-studio">Estudio VFX</span>
+        <div class="card-name">Studio Moonshot</div>
+        <div class="card-handle"><a href="https://studio-moonshot.com" target="_blank">studio-moonshot.com</a></div>
+      </div>
+      <div class="card-score">80<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">2D/3D VFX</span><span class="tag">MV</span><span class="tag">CF</span><span class="tag">Drama</span>
+    </div>
+    <p class="card-desc">Estudio boutique de VFX/CG Seoul. Aparecen en créditos de MVs de Rigend Film (LE SSERAFIM, BoyNextDoor). Foco en beauty skin VFX, 2D y 3D para drama, film, MVs y comerciales. Perfil más indie y accesible que los grandes estudios.</p>
+    <div class="card-clients"><b>Créditos:</b> LE SSERAFIM MVs · BoyNextDoor · comerciales</div>
+    <div class="card-angle">Estudio asequible para VFX boutique en producciones de moda y música. Posible socio de overflow directo.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        Via web: <a href="https://studio-moonshot.com" target="_blank">studio-moonshot.com</a><br>
+        Seoul, Korea
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 5. BLEUNOIA VFX -->
+  <div class="card" data-cat="studio">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-studio">Estudio VFX</span>
+        <div class="card-name">BLEUNOIA VFX</div>
+        <div class="card-handle"><a href="https://instagram.com/bleunoia.vfx" target="_blank">@bleunoia.vfx</a></div>
+      </div>
+      <div class="card-score">78<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">2D VFX</span><span class="tag">CG</span><span class="tag">Kpop</span><span class="tag">Cleaning</span>
+    </div>
+    <p class="card-desc">Estudio de VFX presente en múltiples créditos de MVs de Rigend Film. Aparecen en LE SSERAFIM "BOOMPALA" y producciones de BoyNextDoor. Especializados en CG, 2D y cleaning para MVs y comerciales.</p>
+    <div class="card-clients"><b>Créditos:</b> LE SSERAFIM · BoyNextDoor · Rigend Film pipeline</div>
+    <div class="card-angle">Contacto directo para VFX 2D/CG en producciones musicales y de moda. Pipeline complementario.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://instagram.com/bleunoia.vfx" target="_blank">@bleunoia.vfx</a><br>
+        Seoul, Korea
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 6. RIMA YOON -->
+  <div class="card" data-cat="director">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-director">Director MV</span>
+        <div class="card-name">Rima Yoon</div>
+        <div class="card-handle">Co-founder — Rigend Film</div>
+      </div>
+      <div class="card-score">90<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Visual Narrative</span><span class="tag">Post</span><span class="tag">Edit</span><span class="tag">Dirección</span>
+    </div>
+    <p class="card-desc">Co-directora y supervisora de post-producción de Rigend Film. Responsable del editing y coordinación de VFX en los MVs. Background en diseño visual. Graduada en video design. Maneja el lado creativo-visual de los proyectos: edición, color, coordinación de VFX externos.</p>
+    <div class="card-clients"><b>Portfolio:</b> TWICE · IVE · LE SSERAFIM · BoyNextDoor · NCT 127</div>
+    <div class="card-angle">Contacto personal más accesible para propuesta de colaboración en VFX/CGI para sus MVs.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="mailto:rigend.film@gmail.com">rigend.film@gmail.com</a><br>
+        via Rigend Film
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 7. JANG DONGJU (DJ) -->
+  <div class="card" data-cat="director">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-director">Director / EP</span>
+        <div class="card-name">Jang Dongju (DJ)</div>
+        <div class="card-handle">Executive Producer — Rigend Film</div>
+      </div>
+      <div class="card-score">88<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">EP</span><span class="tag">Producción</span><span class="tag">Kpop</span><span class="tag">Dirección</span>
+    </div>
+    <p class="card-desc">Co-fundador y Executive Producer de Rigend Film. Lidera el lado de producción y logística de los proyectos. Desde 2016 ha escalado la productora hasta ser la referente en MVs de Kpop de alta escala. Toma decisiones de pipeline y subcontratación.</p>
+    <div class="card-clients"><b>Portfolio:</b> SEVENTEEN · BoyNextDoor · (G)I-DLE · ITZY · IZ*ONE</div>
+    <div class="card-angle">Decision maker principal en Rigend. El contacto correcto para propuesta B2B de VFX/CGI en sus producciones.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="mailto:rigend.film@gmail.com">rigend.film@gmail.com</a><br>
+        via Rigend Film
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 8. MOKTAN PRODUCTIONS -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">Producción / Post</span>
+        <div class="card-name">Moktan Productions</div>
+        <div class="card-handle"><a href="https://instagram.com/moktanproductions" target="_blank">@moktanproductions</a></div>
+      </div>
+      <div class="card-score">82<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Branded Content</span><span class="tag">Documental</span><span class="tag">Fashion</span><span class="tag">Bilingüe</span>
+    </div>
+    <p class="card-desc">Estudio bilingual (KO/EN) fundado en Seoul. Equipo identificado: Mike Beech (Dir/DoP, Netflix Originals), Jiwon Lee (Co-founder/Producer), Hyunsuh Paik (Producer/Translator), Wonman Kim (Foto/Video). Portfolio: Samsung, V&A, Lululemon, Meta, CNN, EU Commission.</p>
+    <div class="card-clients"><b>Clientes:</b> Samsung · V&A · Lululemon · Meta · CNN · EU Commission · UNESCO</div>
+    <div class="card-angle">Socio de producción local Seoul. Overflow de VFX/CGI para sus proyectos de branded content internacionales de moda y tech.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="mailto:contact@moktanproductions.com">contact@moktanproductions.com</a><br>
+        Jiwon Lee · Mike Beech · <a href="https://moktanproductions.com" target="_blank">moktanproductions.com</a>
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 9. GU KAWASHITA -->
+  <div class="card" data-cat="artist">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-artist">Video Producer</span>
+        <div class="card-name">Gu Kawashita</div>
+        <div class="card-handle"><a href="https://instagram.com/kawashitagu" target="_blank">@kawashitagu</a></div>
+      </div>
+      <div class="card-score">75<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Video</span><span class="tag">Edit</span><span class="tag">Seoul/SP</span><span class="tag">29K seg</span>
+    </div>
+    <p class="card-desc">Video producer/editor brasileño afincado en Seoul y São Paulo. 29K seguidores en Instagram. Puente cultural entre América Latina y el mercado creativo coreano. Accesible y con email público.</p>
+    <div class="card-clients"><b>Perfil:</b> Producer/editor independiente · Seoul + São Paulo</div>
+    <div class="card-angle">Contacto puente para entrada al ecosistema creativo Seoul desde perspectiva global. Colaboración en branded content o referencia de red local.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="mailto:gustavokawashita@gmail.com">gustavokawashita@gmail.com</a><br>
+        Seoul / São Paulo
+      </div>
+      <span class="contact-flag">🇧🇷🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 10. CORE-A STUDIOS -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">Producción / Post</span>
+        <div class="card-name">Core-A Studios</div>
+        <div class="card-handle"><a href="https://instagram.com/core_a_studios" target="_blank">@core_a_studios</a></div>
+      </div>
+      <div class="card-score">68<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Branded</span><span class="tag">Bilingüe</span><span class="tag">Asia</span><span class="tag">Est. 2014</span>
+    </div>
+    <p class="card-desc">Studio bilingüe (KO/EN) Seoul fundado en 2014. "The #1 English + Korean speaking video production studio." Foco en branded content y producción localizada para clientes internacionales en Asia. Portfolio: Team Vitality (esports). Pequeño pero consolidado.</p>
+    <div class="card-clients"><b>Clientes:</b> Team Vitality · branded content Asia</div>
+    <div class="card-angle">Socio de producción local accesible para entrada al mercado Seoul. VFX como extensión de su servicio a clientes internacionales.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        LinkedIn: Core-A Studios<br>
+        <a href="https://instagram.com/core_a_studios" target="_blank">@core_a_studios</a>
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 11. MACROGRAPH -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">Post-Pro / Multimedia</span>
+        <div class="card-name">Macrograph</div>
+        <div class="card-handle">macrograph.co.kr</div>
+      </div>
+      <div class="card-score">76<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">VFX</span><span class="tag">Motion Picture</span><span class="tag">Multimedia</span><span class="tag">Seoul</span>
+    </div>
+    <p class="card-desc">Empresa multimedia y de entretenimiento Seoul (51-100 empleados, fundada 2007). Servicios de motion pictures y film production. Uno de los players mid-size con historial en producción de VFX y contenidos multimedia.</p>
+    <div class="card-clients"><b>Sector:</b> Multimedia · entertainment · motion picture production</div>
+    <div class="card-angle">Mid-size studio para VFX y post — posible socio para proyectos con presupuesto medio o overflow de compositing.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        Seoul, Korea · 51–100 emp.<br>
+        Contacto via web corporativa
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 12. ELECTRICLIME° SEOUL -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">Producción Comercial</span>
+        <div class="card-name">electriclime° Seoul</div>
+        <div class="card-handle">electriclime°</div>
+      </div>
+      <div class="card-score">79<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Comercial</span><span class="tag">Branded</span><span class="tag">Agency</span><span class="tag">Global</span>
+    </div>
+    <p class="card-desc">Boutique de producción comercial con presencia global (Singapore, Dubai, Sydney, Bangkok, Riyadh, Seoul). Especializados en publicidad cinematográfica y branded content. Desde 2010. Clientes: agencias internacionales y marcas globales.</p>
+    <div class="card-clients"><b>Sector:</b> Advertising · branded content · commercial film · agencias</div>
+    <div class="card-angle">Producción comercial high-end con red global. VFX/CGI como servicio complementario para sus campaigns de moda/tech en Asia.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        Seoul office — electriclime.tv<br>
+        Contacto via web global
+      </div>
+      <span class="contact-flag">🇰🇷🌏</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 13. CLO VIRTUAL FASHION -->
+  <div class="card" data-cat="cd">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-cd">Fashion Tech / 3D</span>
+        <div class="card-name">CLO Virtual Fashion</div>
+        <div class="card-handle">clo3d.com</div>
+      </div>
+      <div class="card-score">83<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">3D Fashion</span><span class="tag">Simulación</span><span class="tag">AR</span><span class="tag">Film</span>
+    </div>
+    <p class="card-desc">Seoul (101-250 empleados, fundada 2009). Referente mundial en simulación 3D de prendas para moda, film y gaming. Herramienta estándar de la industria fashion para visualización digital. Activos en e-commerce, fashion tech y retail VR/AR.</p>
+    <div class="card-clients"><b>Sector:</b> Fashion houses · e-commerce · film/gaming studios · retail tech</div>
+    <div class="card-angle">Partner tech para proyectos de digital fashion, CGI de prenda y branded content donde la simulación 3D de tejido sea relevante.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        Seoul · <a href="https://clo3d.com" target="_blank">clo3d.com</a><br>
+        Contacto via web / LinkedIn
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 14. 37TH DEGREE -->
+  <div class="card" data-cat="postpro">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-postpro">Line Production</span>
+        <div class="card-name">37th Degree</div>
+        <div class="card-handle">37thdegree.com</div>
+      </div>
+      <div class="card-score">72<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Line Production</span><span class="tag">MV</span><span class="tag">Fashion Film</span><span class="tag">Korea Fix</span>
+    </div>
+    <p class="card-desc">Servicio completo de producción en Seoul para clientes internacionales. Gestión de localizaciones, permisos, crew, casting y post-producción. Producen MVs para artistas coreanos e internacionales. Coordinan con directores top y equipos de styling de Seoul.</p>
+    <div class="card-clients"><b>Sector:</b> Films · drama series · MVs · comerciales · branded content</div>
+    <div class="card-angle">Facilitador de producción en Seoul para proyectos externos. VFX como add-on para sus campañas de moda y MVs internacionales.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://37thdegree.com" target="_blank">37thdegree.com</a><br>
+        Seoul · contacto via web
+      </div>
+      <span class="contact-flag">🇰🇷</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+  <!-- 15. MYUNGEUN KIM -->
+  <div class="card" data-cat="artist">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="card-type type-artist">Motion Designer</span>
+        <div class="card-name">Myungeun Kim</div>
+        <div class="card-handle"><a href="https://instagram.com/myung_motion" target="_blank">@myung_motion</a></div>
+      </div>
+      <div class="card-score">70<span>score</span></div>
+    </div>
+    <div class="tags">
+      <span class="tag">Motion</span><span class="tag">Animation</span><span class="tag">Seoul→London</span><span class="tag">Buff Motion</span>
+    </div>
+    <p class="card-desc">Motion designer y animator coreano. Trabaja en @buffmotion (estudio de motion design de referencia UK). Background Seoul, basado entre Seoul y Brighton. Perfil de artista individual con experiencia en motion design de alto nivel.</p>
+    <div class="card-clients"><b>Estudio:</b> Buff Motion (London) · Seoul roots</div>
+    <div class="card-angle">Artista individual para motion design — posible colaboración en títulos, loops animados o branded motion content.</div>
+    <div class="card-contact">
+      <div class="contact-info">
+        <a href="https://instagram.com/myung_motion" target="_blank">@myung_motion</a><br>
+        Seoul 🇰🇷 → Brighton 🇬🇧
+      </div>
+      <span class="contact-flag">🇰🇷🇬🇧</span>
+    </div>
+    <div class="card-footer">
+      <select class="status-select"><option>pendiente</option><option>hiteado</option><option>respondio</option><option>descartado</option></select>
+      <input class="note-input" type="text" placeholder="+ nota...">
+    </div>
+  </div>
+
+</div><!-- /grid -->
+
+<footer>
+  <b>Fuentes:</b> Instagram público · web corporativa · Korea.net · EnVi Media · Vitrina AI · LinkedIn · créditos MVs (jun 2026).<br>
+  Datos de seguidores y contactos verificados a fecha 2026-06-24. VIRAL — Duque Calopa.
+</footer>
+
+<script>
+// Filter logic
+const btns = document.querySelectorAll('.filter-btn');
+const cards = document.querySelectorAll('.card');
+const countEl = document.getElementById('visible-count');
+
+btns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    btns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    let visible = 0;
+    cards.forEach(card => {
+      const match = filter === 'all' || card.dataset.cat === filter;
+      card.dataset.hidden = match ? 'false' : 'true';
+      if (match) visible++;
+    });
+    countEl.textContent = visible;
+  });
+});
+
+// Persist state in localStorage
+const LS = 'viral_korea_contacts_2026';
+let state = JSON.parse(localStorage.getItem(LS) || '{}');
+
+cards.forEach((card, i) => {
+  const id = 'card_' + i;
+  const sel = card.querySelector('.status-select');
+  const inp = card.querySelector('.note-input');
+  if (state[id]) {
+    if (state[id].status) sel.value = state[id].status;
+    if (state[id].note) inp.value = state[id].note;
+  }
+  sel.addEventListener('change', () => {
+    state[id] = state[id] || {};
+    state[id].status = sel.value;
+    localStorage.setItem(LS, JSON.stringify(state));
+  });
+  inp.addEventListener('input', () => {
+    state[id] = state[id] || {};
+    state[id].note = inp.value;
+    localStorage.setItem(LS, JSON.stringify(state));
+  });
+});
+</script>
+</body>
+</html>
