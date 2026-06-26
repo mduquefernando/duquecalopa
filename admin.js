@@ -36,7 +36,8 @@ const STATIC_LEAD_STATE_KEY = "viral_admin_static_leads_v1";
 const SHARED_REFRESH_MS = 15000;
 const CRM_IMPORT_SOURCES = [
   { url: "korea-contacts-jun2026.html", country: "KR", origin: "Korea creative contacts jun 2026" },
-  { url: "uk-contacts-jun2026.html", country: "UK", origin: "UK creative contacts jun 2026" }
+  { url: "uk-contacts-jun2026.html", country: "UK", origin: "UK creative contacts jun 2026" },
+  { url: "viral-crm-prospects.html", origin: "Viral prospects CRM pull 01", type: "table" }
 ];
 const EXTRA_LEADS = [
   { id: "advisry", cat: "Marca", brand: "ADVISRY", handle: "advisry", theme: "Fashion autoral / cine", contact_person: "Keith Herron", contact_instagrams: [{ handle: "yungrooftop" }], followers: 38000, followers_label: "38K / 22K", followers_sub: "personal / marca 22K", country: "US", via: "DM personal", is_email: false, is_hot: false },
@@ -596,6 +597,58 @@ function parseImportedLeadCard(card, source) {
   };
 }
 
+function getImportedProspectCountry(row) {
+  const rawCountry = row.dataset.country || textFromHtml(row.querySelector(".country-tag")?.innerHTML);
+  const map = { fr: "FR", jp: "JP", uk: "UK", us: "US", france: "FR", francia: "FR", japon: "JP" };
+  const normalized = rawCountry.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return map[normalized] || rawCountry.toUpperCase() || "Global";
+}
+
+function parseImportedProspectRow(row, source) {
+  const brand = textFromHtml(row.querySelector(".studio-name")?.innerHTML);
+  const type = textFromHtml(row.querySelector(".studio-type")?.innerHTML);
+  const country = getImportedProspectCountry(row);
+  const encaje = textFromHtml(row.querySelector(".encaje")?.innerHTML);
+  const contactNames = Array.from(row.querySelectorAll(".contact-name"));
+  const contactRoles = Array.from(row.querySelectorAll(".contact-role"));
+  const contacts = contactNames.map((item, index) => {
+    const name = textFromHtml(item.innerHTML);
+    const role = textFromHtml(contactRoles[index]?.innerHTML);
+    return role ? `${name} (${role})` : name;
+  });
+  const instagramLinks = Array.from(row.querySelectorAll(".ig-link"));
+  const instagrams = getUniqueValues(instagramLinks.map((link) => textFromHtml(link.innerHTML).replace(/^@/, "")));
+  const primaryHandle = instagrams[instagrams.length - 1] || "";
+  const contactLink = row.querySelector(".email-link");
+  const contactHref = contactLink?.getAttribute("href") || "";
+  const contactText = textFromHtml(contactLink?.innerHTML);
+  const email = contactHref.startsWith("mailto:") ? contactHref.slice(7).split("?")[0] : "";
+  const via = getUniqueValues([email || contactText, ...instagrams.map((item) => `@${item}`)]).join(" / ") || "n/d";
+  const rowNotes = textFromHtml(row.querySelector(".notes")?.innerHTML);
+  const notes = [
+    `Origen ${source.origin}.`,
+    encaje ? `Encaje ${encaje}.` : "",
+    rowNotes
+  ].filter(Boolean).join(" ");
+
+  return {
+    id: `${country.toLowerCase()}-${slugifyLeadId(brand || primaryHandle)}`,
+    cat: "Estudio",
+    brand,
+    handle: primaryHandle,
+    theme: getUniqueValues([type, encaje ? `Encaje ${encaje}` : ""]).join(" / ") || source.origin,
+    contact_person: contacts.join(" / ") || brand,
+    contact_instagrams: instagrams.map((handle) => ({ handle })),
+    followers: null,
+    followers_label: "n/d",
+    followers_sub: type || null,
+    country,
+    via,
+    is_email: Boolean(email),
+    is_hot: /muy\s+alto/i.test(encaje),
+    notes
+  };
+}
 async function loadCrmImportSources() {
   if (crmImportSourcesLoaded) return;
   const importedLeads = [];
@@ -606,8 +659,10 @@ async function loadCrmImportSources() {
 
     const html = await response.text();
     const doc = new DOMParser().parseFromString(html, "text/html");
-    doc.querySelectorAll(".card").forEach((card) => {
-      const lead = parseImportedLeadCard(card, source);
+    const selector = source.type === "table" ? "tbody tr" : ".card";
+    const parser = source.type === "table" ? parseImportedProspectRow : parseImportedLeadCard;
+    doc.querySelectorAll(selector).forEach((item) => {
+      const lead = parser(item, source);
       if (lead.brand) importedLeads.push(lead);
     });
   }
@@ -621,6 +676,7 @@ async function loadCrmImportSources() {
   });
   crmImportSourcesLoaded = true;
 }
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viral — Prospects CRM</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.18);
+    --text: #f0f0f0;
+    --text-muted: #666;
+    --text-dim: #999;
+    --accent: #c8ff00;
+    --accent-dim: rgba(200,255,0,0.1);
+    --red: #ff4444;
+    --amber: #ffaa00;
+    --green: #00cc77;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 32px 40px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .header-left h1 {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .header-left h2 {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .header-left h2 span {
+    color: var(--accent);
+  }
+
+  .stats {
+    display: flex;
+    gap: 32px;
+  }
+
+  .stat {
+    text-align: right;
+  }
+
+  .stat-num {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .filters {
+    padding: 16px 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .table-wrap {
+    padding: 0 40px 60px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+
+  thead tr {
+    border-bottom: 1px solid var(--border);
+  }
+
+  thead th {
+    padding: 14px 12px 10px;
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    cursor: pointer;
+  }
+
+  tbody tr:hover {
+    background: var(--surface);
+  }
+
+  td {
+    padding: 16px 12px;
+    vertical-align: middle;
+  }
+
+  .studio-name {
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .studio-type {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .contact-name {
+    font-size: 12px;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .contact-role {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .ig-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 11px;
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: all 0.15s;
+    margin-bottom: 4px;
+    white-space: nowrap;
+  }
+
+  .ig-link:hover {
+    border-color: var(--border-hover);
+    color: var(--text);
+  }
+
+  .ig-links {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .ig-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .ig-dot.pending {
+    background: var(--text-muted);
+  }
+
+  .email-link {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    transition: color 0.15s;
+  }
+
+  .email-link:hover {
+    color: var(--accent);
+  }
+
+  .country-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .uk { background: rgba(100,149,237,0.12); color: #6495ED; }
+  .us { background: rgba(200,255,0,0.08); color: #c8ff00; }
+  .jp { background: rgba(255,100,100,0.12); color: #ff6464; }
+  .fr { background: rgba(180,120,255,0.12); color: #b478ff; }
+
+  .encaje {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .encaje-alto { background: rgba(0,204,119,0.1); color: var(--green); }
+  .encaje-medio { background: rgba(255,170,0,0.1); color: var(--amber); }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  .status-pending { background: var(--text-muted); }
+  .status-contacted { background: var(--amber); }
+  .status-replied { background: var(--green); }
+
+  .status-label {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .notes {
+    font-size: 11px;
+    color: var(--text-dim);
+    max-width: 180px;
+    line-height: 1.4;
+  }
+
+  .notes strong {
+    color: var(--text-muted);
+  }
+
+  .pending-tag {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 900px) {
+    header { padding: 24px 20px 20px; flex-direction: column; align-items: flex-start; }
+    .table-wrap { padding: 0 20px 40px; }
+    .filters { padding: 14px 20px; }
+    .stats { gap: 20px; }
+    table { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Viral Studio — Prospecting</h1>
+    <h2>Pull internacional <span>#01</span></h2>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">10</div>
+      <div class="stat-label">Prospects</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Países</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Contactados</div>
+    </div>
+  </div>
+</header>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterAll()">Todos</button>
+  <button class="filter-btn" onclick="filterCountry('uk')">UK</button>
+  <button class="filter-btn" onclick="filterCountry('us')">US</button>
+  <button class="filter-btn" onclick="filterCountry('jp')">Japón</button>
+  <button class="filter-btn" onclick="filterCountry('fr')">Francia</button>
+  <button class="filter-btn" onclick="filterEncaje('muy-alto')">Encaje muy alto</button>
+</div>
+
+<div class="table-wrap">
+  <table id="crm-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Estudio</th>
+        <th>Contacto</th>
+        <th>Instagram</th>
+        <th>Email</th>
+        <th>País</th>
+        <th>Encaje</th>
+        <th>Estado</th>
+        <th>Notas</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr data-country="uk" data-encaje="muy-alto">
+        <td style="color:var(--text-muted)">01</td>
+        <td>
+          <div class="studio-name">Builders Club</div>
+          <div class="studio-type">Creative Production / VFX / 3D</div>
+        </td>
+        <td>
+          <div class="contact-name">Jonas Hegi</div>
+          <div class="contact-role">Co-founder / Director</div>
+          <div style="height:6px"></div>
+          <div class="contact-name">Julien Simshauser</div>
+          <div class="contact-role">Co-founder / Director</div>
+        </td>
+        <td>
+          <div class="ig-links">
+            <a class="ig-link" href="https://instagram.com/jonashegi" target="_blank">
+              <span class="ig-dot"></span>@jonashegi
+            </a>
+            <a class="ig-link" href="https://instagram.com/juliensimshauser" target="_blank">
+              <span class="ig-dot"></span>@juliensimshauser
+            </a>
+            <a class="ig-link" href="https://instagram.com/buildersclub" target="_blank">
+              <span class="ig-dot" style="background:#444"></span>@buildersclub
+            </a>
+          </div>
+        </td>
+        <td><a class="email-link" href="mailto:info@builders-club.com">info@builders-club.com</a></td>
+        <td><span class="country-tag uk">UK</span></td>
+        <td><span class="encaje encaje-alto">Muy alto</span></td>
+        <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
+        <td class="notes">Nike, Adidas, Chanel, i-D, Dazed. VFX + 3D + film. <strong>Perfil Decolsa en Londres.</strong></td>
+      </tr>
+
+      <tr data-country="us" data-encaje="muy-alto">
+        <td style="color:var(--text-muted)">02</td>
+        <td>
+          <div class="studio-name">HI-VIS</div>
+          <div class="studio-type">Creative Direction / Experiential / VFX</div>
+        </td>
+        <td>
+          <div class="contact-name">— Sin founder público</div>
+          <div class="contact-role">Estudio colectivo</div>
+        </td>
+        <td>
+          <div class="ig-links">
+            <a class="ig-link" href="https://instagram.com/hivis.world" target="_blank">
+              <span class="ig-dot" style="background:#444"></span>@hivis.world
+            </a>
+          </div>
+        </td>
+        <td><a class="email-link" href="mailto:hi@hi-vis.world">hi@hi-vis.world</a></td>
+        <td><span class="country-tag us">US</span></td>
+        <td><span class="encaje encaje-alto">Muy alto</span></td>
+        <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
+        <td class="notes">Nike, Adidas, SSENSE, CP Company, Moncler. Streetwear + cultura urbana NYC.</td>
+      </tr>
+
+      <tr data-country="uk" data-encaje="muy-alto">
+        <td style="color:var(--text-muted)">03</td>
+        <td>
+          <div class="studio-name">Microdot</div>
+          <div class="studio-type">VFX / Post-producción boutique</div>
+        </td>
+        <td>
+          <div class="contact-name">Adam Clarke</div>
+          <div class="contact-role">Co-founder</div>
+          <div style="height:6px"></div>
+          <div class="contact-name">Mikey Smith</div>
+          <div class="contact-role">Co-founder</div>
+        </td>
+        <td>
+          <div class="ig-links">
+            <a class="ig-link" href="https://instagram.com/adamclarkecolour" target="_blank">
+              <span class="ig-dot"></span>@adamclarkecolour
+            </a>
+            <a class="ig-link" href="https://instagram.com/microdot.vision" target="_blank">
+              <span class="ig-dot" style="background:#444"></span>@microdot.vision
+            </a>
+          </div>
+        </td>
+        <td><a class="email-link" href="https://microdot.vision/info" target="_blank">microdot.vision/info</a></td>
+        <td><span class="country-tag uk">UK</span></td>
+        <td><span class="encaje encaje-alto">Muy alto</span></td>
+        <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
+        <td class="notes">Sundance, Netflix, Maison Margiela, Nike. Lanzado 2025. Pequeño y muy potente.</td>
+      </tr>
+
+      <tr data-country="us" data-encaje="alto">
+        <td style="color:var(--text-muted)">04</td>
+        <td>
+          <div class="studio-name">Indie Studios NYC</div>
+          <div class="studio-type">Fashion Film / Music Video / Editorial</div>
+        </td>
+        <td>
+          <div class="contact-name">Andrew White</div>
+          <div class="contact-role">Co-founder / Director</div>
+          <div style="height:6px"></div>
+          <div class="contact-name">Sam Bates</div>
+          <div class="contact-role">Co-founder / Director</div>
+        </td>
+        <td>
+          <div class="ig-links">
+            <a class="ig-link" href="https://instagram.com/indiestudios.nyc" target="_blank">
+              <span class="ig-dot" style="background:#444"></span>@indiestudios.nyc
+            </a>
+            <span class="pending-tag">IGs personales pendiente</span>
+          </div>
+        </td>
+        <td><a class="email-link" href="mailto:info@indiestudios.nyc">info@indiestudios.nyc</a></td>
+        <td><span class="country-tag us">US</span></td>
+        <td><span class="encaje encaje-alto">Alto</span></td>
+        <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
+        <td class="notes">16mm, fashion films, music videos. Brooklyn. Estética cinematográfica muy cuidada.</td>
+      </tr>
+
+      <tr data-country="us" data-encaje="alto">
+        <td style="color:var(--text-muted)">05</td>
+        <td>
+          <div class="studio-name">Porto Rocha</div>
+          <div class="studio-type">Branding / Dirección Creativa / Campaña</div>
+        </td>
+        <td>
+          <div class="contact-name">Felipe Rocha</div>
+          <div class="contact-role">Co-founder / Creative Director</div>
+          <div style="height:6px"></div>
+          <div class="contact-name">Leo Porto</div>
+          <div class="contact-role">Co-founder / Creative Director</div>
+        </td>
+        <td>
+          <div class="ig-links">
+            <a class="ig-link" href="https://instagram.com/feliperocha" target="_blank">
+              <span class="ig-dot"></span>@feliperocha
+            </a>
+            <a class="ig-link" href="https://instagram.com/porto_rocha" target="_blank">
+              <span class="ig-dot" style="background:#444"></span>@porto_rocha
+            </a>
+            <span class="pending-tag">IG Leo Porto pendiente</span>
+          </div>
+        </td>
+        <td><a class="email-link" href="mailto:info@portorocha.com">info@portorocha.com</a></td>
+        <td><span class="country-tag us">US</span></td>
+        <td><span class="encaje encaje-alto">Alto</span></td>
+        <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
+        <td class="notes">Nike, Sundance, W Hotels, Google Gemini. NYC / Londres. Buscan partners de producción.</td>
+      </tr>
+
+      <tr data-country="uk" data-encaje="alto">
+        <td style="color:var(--text-muted)">06</td>
+        <td>
+          <div class="studio-name">Studio B</div>
+          <div class="studio-type">VFX / Branded Content / Worldbuilding</div>
+        </td>
+        <td>
+          <div class="contact-name">Brandon Baum</div>
+          <div class="contact-role">Founder / CEO</div>
+        </td>
+        <td>
+          <div class="ig-links">
+            <a class="ig-link" href="https://instagram.com/brandonb" target="_blank">
+              <span class="ig-dot"></span>@brandonb
+            </a>
+            <a class="ig-link" href="https://instagram.com/studiob" target="_blank">
+              <span class="ig-dot" style="background:#444"></span>@studiob
+            </a>
+          </div>
+        </td>
+        <td><a class="email-link" href="https://studiob.net" target="_blank">studiob.net</a></td>
+        <td><span class="country-tag uk">UK</span></td>
+        <td><span class="encaje encaje-alto">Alto</span></td>
+        <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
+        <td class="notes">Adidas, LEGO, O2, Disney. 28M seguidores personales. Creator-first studio Londres.</td>
+      </tr>
+
+      <tr data-country="uk" data-encaje="alto">
+        <td style="color:var(--text-muted)">07</td>
+        <td>
+          <div class="studio-name">Studio Saints</div>
+          <div class="studio-type">Creative Services / Artist</div>
+        </td>
+        <td>
+          <div class="contact-name">— Pendiente identificar</div>
+          <div class="contact-role">Founder / Creative Director</div>
+        </td>
+        <td>
+          <div class="ig-links">
+            <a class="ig-link" href="https://instagram.com/studio_saints" target="_blank">
+              <span class="ig-dot" style="background:#444"></span>@studio_saints
+            </a>
+            <span class="pending-tag">IG personal pendiente</span>
+          </div>
+        </td>
+        <td><a class="email-link" href="https://studiosaints.net" target="_blank">studiosaints.net</a></td>
+        <td><span class="country-tag uk">UK</span></td>
+        <td><span class="encaje encaje-alto">Alto</span></td>
+        <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
+        <td class="notes">14.3k seg. Les sigue @slapscreative y @donquiles. Dentro del ecosistema exacto.</td>
+      </tr>
+
+      <tr data-country="fr" data-encaje="medio-alto">
+        <td style="color:var(--text-muted)">08</td>
+        <td>
+          <div class="studio-name">Orage Studio</div>
+          <div class="studio-type">3D / VFX / Motion Design</div>
+        </td>
+        <td>
+          <div class="contact-name">— Pendiente identificar</div>
+          <div class="contact-role">Founder / Creative Director</div>
+        </td>
+        <td>
+          <div class="ig-links">
+            <a class="ig-link" href="https://instagram.com/orage.studio" target="_blank">
+              <span class="ig-dot" style="background:#444"></span>@orage.studio
+            </a>
+            <span class="pending-tag">IG personal pendiente</span>
+          </div>
+        </td>
+        <td><a class="email-link" href="https://orage-studio.com" target="_blank">orage-studio.com</a></td>
+        <td><span class="country-tag fr">Francia</span></td>
+        <td><span class="encaje encaje-medio">Medio-alto</span></td>
+        <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
+        <td class="notes">3D, VFX, motion design. Estética cinematográfica y atmosférica para marcas.</td>
+      </tr>
+
+      <tr data-country="jp" data-encaje="alto">
+        <td style="color:var(--text-muted)">09</td>
+        <td>
+          <div class="studio-name">Khaki</div>
+          <div class="studio-type">VFX / Dirección Visual</div>
+        </td>
+        <td>
+          <div class="contact-name">— Pendiente identificar</div>
+          <div class="contact-role">Founder / VFX Director</div>
+        </td>
+        <td>
+          <div class="ig-links">
+            <a class="ig-link" href="https://instagram.com/khaki_tokyo" target="_blank">
+              <span class="ig-dot" style="background:#444"></span>@khaki_tokyo
+            </a>
+            <span class="pending-tag">IG personal pendiente</span>
+          </div>
+        </td>
+        <td><a class="email-link" href="https://khaki.tokyo" target="_blank">khaki.tokyo</a></td>
+        <td><span class="country-tag jp">Japón</span></td>
+        <td><span class="encaje encaje-alto">Alto</span></td>
+        <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
+        <td class="notes">VFX boutique Tokio. Filosofía de director, no de estudio servicio. Mercado asiático.</td>
+      </tr>
+
+      <tr data-country="jp" data-encaje="medio-alto">
+        <td style="color:var(--text-muted)">10</td>
+        <td>
+          <div class="studio-name">Laugh Mind</div>
+          <div class="studio-type">Identidad Visual / Motion / Experiencial</div>
+        </td>
+        <td>
+          <div class="contact-name">— Pendiente identificar</div>
+          <div class="contact-role">Founder / Creative Director</div>
+        </td>
+        <td>
+          <div class="ig-links">
+            <a class="ig-link" href="https://instagram.com/laughmind" target="_blank">
+              <span class="ig-dot" style="background:#444"></span>@laughmind
+            </a>
+            <span class="pending-tag">IG personal pendiente</span>
+          </div>
+        </td>
+        <td><a class="email-link" href="https://laughmind.jp" target="_blank">laughmind.jp</a></td>
+        <td><span class="country-tag jp">Japón</span></td>
+        <td><span class="encaje encaje-medio">Medio-alto</span></td>
+        <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
+        <td class="notes">Estudio creativo Tokio. Refinado, narrativo. Mezcla tradición y digital.</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function filterAll() {
+    document.querySelectorAll('tbody tr').forEach(r => r.style.display = '');
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function filterCountry(c) {
+    document.querySelectorAll('tbody tr').forEach(r => {
+      r.style.display = r.dataset.country === c ? '' : 'none';
+    });
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function filterEncaje(e) {
+    document.querySelectorAll('tbody tr').forEach(r => {
+      r.style.display = r.dataset.encaje === e ? '' : 'none';
+    });
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
