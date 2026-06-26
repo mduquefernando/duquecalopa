@@ -608,7 +608,7 @@ function parseImportedProspectRow(row, source) {
   const brand = textFromHtml(row.querySelector(".studio-name")?.innerHTML);
   const type = textFromHtml(row.querySelector(".studio-type")?.innerHTML);
   const country = getImportedProspectCountry(row);
-  const encaje = textFromHtml(row.querySelector(".encaje")?.innerHTML);
+  const fit = row.dataset.encaje || "";
   const contactNames = Array.from(row.querySelectorAll(".contact-name"));
   const contactRoles = Array.from(row.querySelectorAll(".contact-role"));
   const contacts = contactNames.map((item, index) => {
@@ -627,7 +627,6 @@ function parseImportedProspectRow(row, source) {
   const rowNotes = textFromHtml(row.querySelector(".notes")?.innerHTML);
   const notes = [
     `Origen ${source.origin}.`,
-    encaje ? `Encaje ${encaje}.` : "",
     rowNotes
   ].filter(Boolean).join(" ");
 
@@ -636,7 +635,7 @@ function parseImportedProspectRow(row, source) {
     cat: "Estudio",
     brand,
     handle: primaryHandle,
-    theme: getUniqueValues([type, encaje ? `Encaje ${encaje}` : ""]).join(" / ") || source.origin,
+    theme: type || source.origin,
     contact_person: contacts.join(" / ") || brand,
     contact_instagrams: instagrams.map((handle) => ({ handle })),
     followers: null,
@@ -645,7 +644,7 @@ function parseImportedProspectRow(row, source) {
     country,
     via,
     is_email: Boolean(email),
-    is_hot: /muy\s+alto/i.test(encaje),
+    is_hot: fit === "muy-alto",
     notes
   };
 }

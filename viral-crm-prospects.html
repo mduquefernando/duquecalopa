@@ -236,18 +236,6 @@
   .jp { background: rgba(255,100,100,0.12); color: #ff6464; }
   .fr { background: rgba(180,120,255,0.12); color: #b478ff; }
 
-  .encaje {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 3px;
-    font-size: 10px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
-  .encaje-alto { background: rgba(0,204,119,0.1); color: var(--green); }
-  .encaje-medio { background: rgba(255,170,0,0.1); color: var(--amber); }
 
   .status-dot {
     width: 7px;
@@ -321,7 +309,6 @@
   <button class="filter-btn" onclick="filterCountry('us')">US</button>
   <button class="filter-btn" onclick="filterCountry('jp')">Japón</button>
   <button class="filter-btn" onclick="filterCountry('fr')">Francia</button>
-  <button class="filter-btn" onclick="filterEncaje('muy-alto')">Encaje muy alto</button>
 </div>
 
 <div class="table-wrap">
@@ -334,7 +321,6 @@
         <th>Instagram</th>
         <th>Email</th>
         <th>País</th>
-        <th>Encaje</th>
         <th>Estado</th>
         <th>Notas</th>
       </tr>
@@ -369,7 +355,6 @@
         </td>
         <td><a class="email-link" href="mailto:info@builders-club.com">info@builders-club.com</a></td>
         <td><span class="country-tag uk">UK</span></td>
-        <td><span class="encaje encaje-alto">Muy alto</span></td>
         <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
         <td class="notes">Nike, Adidas, Chanel, i-D, Dazed. VFX + 3D + film. <strong>Perfil Decolsa en Londres.</strong></td>
       </tr>
@@ -393,7 +378,6 @@
         </td>
         <td><a class="email-link" href="mailto:hi@hi-vis.world">hi@hi-vis.world</a></td>
         <td><span class="country-tag us">US</span></td>
-        <td><span class="encaje encaje-alto">Muy alto</span></td>
         <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
         <td class="notes">Nike, Adidas, SSENSE, CP Company, Moncler. Streetwear + cultura urbana NYC.</td>
       </tr>
@@ -423,7 +407,6 @@
         </td>
         <td><a class="email-link" href="https://microdot.vision/info" target="_blank">microdot.vision/info</a></td>
         <td><span class="country-tag uk">UK</span></td>
-        <td><span class="encaje encaje-alto">Muy alto</span></td>
         <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
         <td class="notes">Sundance, Netflix, Maison Margiela, Nike. Lanzado 2025. Pequeño y muy potente.</td>
       </tr>
@@ -451,7 +434,6 @@
         </td>
         <td><a class="email-link" href="mailto:info@indiestudios.nyc">info@indiestudios.nyc</a></td>
         <td><span class="country-tag us">US</span></td>
-        <td><span class="encaje encaje-alto">Alto</span></td>
         <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
         <td class="notes">16mm, fashion films, music videos. Brooklyn. Estética cinematográfica muy cuidada.</td>
       </tr>
@@ -482,7 +464,6 @@
         </td>
         <td><a class="email-link" href="mailto:info@portorocha.com">info@portorocha.com</a></td>
         <td><span class="country-tag us">US</span></td>
-        <td><span class="encaje encaje-alto">Alto</span></td>
         <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
         <td class="notes">Nike, Sundance, W Hotels, Google Gemini. NYC / Londres. Buscan partners de producción.</td>
       </tr>
@@ -509,7 +490,6 @@
         </td>
         <td><a class="email-link" href="https://studiob.net" target="_blank">studiob.net</a></td>
         <td><span class="country-tag uk">UK</span></td>
-        <td><span class="encaje encaje-alto">Alto</span></td>
         <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
         <td class="notes">Adidas, LEGO, O2, Disney. 28M seguidores personales. Creator-first studio Londres.</td>
       </tr>
@@ -534,7 +514,6 @@
         </td>
         <td><a class="email-link" href="https://studiosaints.net" target="_blank">studiosaints.net</a></td>
         <td><span class="country-tag uk">UK</span></td>
-        <td><span class="encaje encaje-alto">Alto</span></td>
         <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
         <td class="notes">14.3k seg. Les sigue @slapscreative y @donquiles. Dentro del ecosistema exacto.</td>
       </tr>
@@ -559,7 +538,6 @@
         </td>
         <td><a class="email-link" href="https://orage-studio.com" target="_blank">orage-studio.com</a></td>
         <td><span class="country-tag fr">Francia</span></td>
-        <td><span class="encaje encaje-medio">Medio-alto</span></td>
         <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
         <td class="notes">3D, VFX, motion design. Estética cinematográfica y atmosférica para marcas.</td>
       </tr>
@@ -584,7 +562,6 @@
         </td>
         <td><a class="email-link" href="https://khaki.tokyo" target="_blank">khaki.tokyo</a></td>
         <td><span class="country-tag jp">Japón</span></td>
-        <td><span class="encaje encaje-alto">Alto</span></td>
         <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
         <td class="notes">VFX boutique Tokio. Filosofía de director, no de estudio servicio. Mercado asiático.</td>
       </tr>
@@ -609,7 +586,6 @@
         </td>
         <td><a class="email-link" href="https://laughmind.jp" target="_blank">laughmind.jp</a></td>
         <td><span class="country-tag jp">Japón</span></td>
-        <td><span class="encaje encaje-medio">Medio-alto</span></td>
         <td><span class="status-dot status-pending"></span><span class="status-label">Pendiente</span></td>
         <td class="notes">Estudio creativo Tokio. Refinado, narrativo. Mezcla tradición y digital.</td>
       </tr>
@@ -633,13 +609,6 @@
     event.target.classList.add('active');
   }
 
-  function filterEncaje(e) {
-    document.querySelectorAll('tbody tr').forEach(r => {
-      r.style.display = r.dataset.encaje === e ? '' : 'none';
-    });
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-  }
 </script>
 
 </body>
