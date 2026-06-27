@@ -644,7 +644,7 @@ function parseImportedProspectRow(row, source) {
     country,
     via,
     is_email: Boolean(email),
-    is_hot: fit === "muy-alto",
+    is_hot: false,
     notes
   };
 }
